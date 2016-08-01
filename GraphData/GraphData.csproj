@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8628C5FC-4A07-422E-8A96-209ADE500CDE}</ProjectGuid>
+    <ProjectGuid>{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ImuravevSoft.Core</RootNamespace>
-    <AssemblyName>ImuravevSoft.Core</AssemblyName>
+    <RootNamespace>GraphData</RootNamespace>
+    <AssemblyName>GraphData</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,12 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\BaseData.cs" />
+    <Compile Include="GraphData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Exception\" />
-    <Folder Include="Tool\" />
+    <ProjectReference Include="..\ImuravevSoft.Core\ImuravevSoft.Core.csproj">
+      <Project>{8628c5fc-4a07-422e-8a96-209ade500cde}</Project>
+      <Name>ImuravevSoft.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

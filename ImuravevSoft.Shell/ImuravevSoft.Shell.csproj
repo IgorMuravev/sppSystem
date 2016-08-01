@@ -44,14 +44,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="Control\DataViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\DataViewer.Designer.cs">
+      <DependentUpon>DataViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\MessageList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\MessageList.Designer.cs">
+      <DependentUpon>MessageList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Main.Designer.cs">
+      <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Control\DataViewer.resx">
+      <DependentUpon>DataViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\MessageList.resx">
+      <DependentUpon>MessageList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -70,6 +91,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ImuravevSoft.Core\ImuravevSoft.Core.csproj">
+      <Project>{8628c5fc-4a07-422e-8a96-209ade500cde}</Project>
+      <Name>ImuravevSoft.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
