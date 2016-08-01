@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{D67E8D8D-1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.GraphData", "Data\GraphData\ImuravevSoft.GraphData.csproj", "{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{79CA0DBB-768C-4AD6-84B2-AACDFB1BEE01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.GraphGen", "Tools\ImuravevSoft.GraphGen\ImuravevSoft.GraphGen.csproj", "{30303BC3-3A1E-4A43-98F7-A7C9F8784B60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,11 +33,16 @@ Global
 		{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30303BC3-3A1E-4A43-98F7-A7C9F8784B60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30303BC3-3A1E-4A43-98F7-A7C9F8784B60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30303BC3-3A1E-4A43-98F7-A7C9F8784B60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30303BC3-3A1E-4A43-98F7-A7C9F8784B60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F} = {D67E8D8D-1802-441E-9D8B-88EF3139468C}
+		{30303BC3-3A1E-4A43-98F7-A7C9F8784B60} = {79CA0DBB-768C-4AD6-84B2-AACDFB1BEE01}
 	EndGlobalSection
 EndGlobal
