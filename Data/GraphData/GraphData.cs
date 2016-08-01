@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using ImuravevSoft.Core.Attributes;
 
-namespace GraphData
+namespace ImuravevSoft.GraphData
 {
+    [DataTree("Графы", "29712F03-947C-41D2-9A21-A7DFEA178448")]
     public class GraphData : BaseData
     {
         public GraphData() : base()
@@ -16,12 +18,12 @@ namespace GraphData
 
         public override void Load(BinaryReader reader)
         {
-            throw new NotImplementedException();
+            Name = reader.ReadString();
         }
 
         public override void Save(BinaryWriter writer)
         {
-            throw new NotImplementedException();
+            writer.Write(Name);
         }
     }
 }

@@ -28,21 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.dataListView = new System.Windows.Forms.ListView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // dataListView
-            // 
-            this.dataListView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataListView.Location = new System.Drawing.Point(0, 35);
-            this.dataListView.Name = "dataListView";
-            this.dataListView.Size = new System.Drawing.Size(242, 502);
-            this.dataListView.TabIndex = 0;
-            this.dataListView.UseCompatibleStateImageBehavior = false;
-            this.dataListView.View = System.Windows.Forms.View.List;
             // 
             // panel1
             // 
@@ -62,11 +52,22 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Менеджер данных";
             // 
+            // treeView1
+            // 
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.LabelEdit = true;
+            this.treeView1.Location = new System.Drawing.Point(0, 35);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(242, 502);
+            this.treeView1.TabIndex = 1;
+            this.treeView1.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeView1_AfterLabelEdit);
+            this.treeView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDown);
+            // 
             // DataViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.dataListView);
+            this.Controls.Add(this.treeView1);
             this.Controls.Add(this.panel1);
             this.Name = "DataViewer";
             this.Size = new System.Drawing.Size(242, 537);
@@ -77,9 +78,8 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ListView dataListView;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TreeView treeView1;
     }
 }

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -93,6 +93,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Data\GraphData\ImuravevSoft.GraphData.csproj">
+      <Project>{c00a0d3c-f25e-400f-84fc-22b4eae32a8f}</Project>
+      <Name>ImuravevSoft.GraphData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ImuravevSoft.Core\ImuravevSoft.Core.csproj">
       <Project>{8628c5fc-4a07-422e-8a96-209ade500cde}</Project>
       <Name>ImuravevSoft.Core</Name>

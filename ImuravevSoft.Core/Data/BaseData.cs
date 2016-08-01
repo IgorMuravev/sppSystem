@@ -12,7 +12,6 @@ namespace ImuravevSoft.Core.Data
     public abstract class BaseData
     {
         private Guid id;
-        protected Guid typeId;
         public string Name { get; set; }
         public Guid Id
         {
@@ -21,11 +20,13 @@ namespace ImuravevSoft.Core.Data
                 return id;
             }
         }
+        public bool IsSelected { get; set; }
         public BaseData()
         {
             id = Guid.NewGuid();
 
         }
+       
 
         public abstract void Save(BinaryWriter writer);
         public abstract void Load(BinaryReader reader);

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.Shell", "Imura
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{D67E8D8D-1802-441E-9D8B-88EF3139468C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphData", "GraphData\GraphData.csproj", "{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.GraphData", "Data\GraphData\ImuravevSoft.GraphData.csproj", "{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
