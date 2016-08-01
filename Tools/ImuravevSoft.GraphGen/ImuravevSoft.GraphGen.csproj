@@ -47,13 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
+    <Compile Include="GraphGenTool.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="GraphGenTool.Designer.cs">
+      <DependentUpon>GraphGenTool.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="GraphGenTool.resx">
+      <DependentUpon>GraphGenTool.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -74,10 +77,21 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Data\GraphData\ImuravevSoft.GraphData.csproj">
+      <Project>{c00a0d3c-f25e-400f-84fc-22b4eae32a8f}</Project>
+      <Name>ImuravevSoft.GraphData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ImuravevSoft.Core\ImuravevSoft.Core.csproj">
       <Project>{8628c5fc-4a07-422e-8a96-209ade500cde}</Project>
       <Name>ImuravevSoft.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ImuravevSoft.Shell\ImuravevSoft.Shell.csproj">
+      <Project>{0e6c6ee0-ec8e-41a5-89c5-0b908a2409a0}</Project>
+      <Name>ImuravevSoft.Shell</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\TypeIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

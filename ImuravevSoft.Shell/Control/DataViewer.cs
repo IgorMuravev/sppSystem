@@ -19,7 +19,14 @@ namespace ImuravevSoft.Shell.Control
         private readonly Dictionary<Type, TreeNode> types = new Dictionary<Type, TreeNode>();
         private readonly Dictionary<Guid, Type> guidTypes = new Dictionary<Guid, Type>();
 
-        private void loadDataTypes()
+        public TreeNode TreeNodeByType(Type t)
+        {
+            if (types.ContainsKey(t))
+                return types[t];
+            else
+                return null;
+        }
+        public void LoadDataTypes()
         {
             treeView1.Nodes.Clear();
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";
@@ -46,7 +53,6 @@ namespace ImuravevSoft.Shell.Control
         public DataViewer()
         {
             InitializeComponent();
-            loadDataTypes();
         }
         public Dictionary<Guid, Type> TypesGuid
         {

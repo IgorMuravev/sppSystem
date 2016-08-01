@@ -1,5 +1,6 @@
 ﻿using ImuravevSoft.Core.Attributes;
 using ImuravevSoft.Core.Data;
+using ImuravevSoft.Core.Tool;
 using ImuravevSoft.Shell.Control;
 using System;
 using System.Collections.Generic;
@@ -15,35 +16,49 @@ namespace ImuravevSoft.Shell
 {
     public partial class Main : Form
     {
+        public static  Main Shell;
+
         public Main()
         {
             InitializeComponent();
             DataManager = dataViewer1;
             MessageList = messageList1;
+            Tools = toolsPanel1;
+            OpenedTools = toolTabs1;
+
+            Main.Shell = this;
+
+            DataManager.LoadDataTypes();
+            Tools.LoadTools();
 
             MessageList.Echo("Программа запущена", MsgType.Info);
-
-
         }
 
         public readonly DataViewer DataManager;
         public readonly MessageList MessageList;
+        public readonly ToolsPanel Tools;
+        public readonly ToolTabs OpenedTools;
+
+
 
         public void SaveData(string fileName)
         {
+            var g = new GraphData.GraphData() {Name = "3121" };
+            var g1 = new GraphData.GraphData() { Name = "ХУЙ" };
+            DataManager.AddData(new[] { g, g1 });
             using (var writer = new BinaryWriter(File.OpenWrite(fileName)))
             {
                 var data = DataManager.AllDatas();
                 writer.Write(data.Length);
                 for (int i = 0; i < data.Length; i++)
                 {
-                    var attr =  data[i].GetType().GetCustomAttributes(typeof(DataTreeAttribute), false).FirstOrDefault() as DataTreeAttribute;
+                    var attr = data[i].GetType().GetCustomAttributes(typeof(DataTreeAttribute), false).FirstOrDefault() as DataTreeAttribute;
                     if (attr != default(Object))
                     {
                         writer.Write(attr.TypeGuid.ToString());
                         data[i].Save(writer);
                     }
-                    
+
                 }
             }
         }

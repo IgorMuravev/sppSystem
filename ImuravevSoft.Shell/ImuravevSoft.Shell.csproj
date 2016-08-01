@@ -56,6 +56,18 @@
     <Compile Include="Control\MessageList.Designer.cs">
       <DependentUpon>MessageList.cs</DependentUpon>
     </Compile>
+    <Compile Include="Control\ToolsPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\ToolsPanel.Designer.cs">
+      <DependentUpon>ToolsPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Control\ToolTabs.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Control\ToolTabs.Designer.cs">
+      <DependentUpon>ToolTabs.cs</DependentUpon>
+    </Compile>
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -69,6 +81,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Control\MessageList.resx">
       <DependentUpon>MessageList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\ToolsPanel.resx">
+      <DependentUpon>ToolsPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Control\ToolTabs.resx">
+      <DependentUpon>ToolTabs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
