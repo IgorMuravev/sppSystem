@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+﻿using ImuravevSoft.Core.Attributes;
 using ImuravevSoft.Core.Tool;
-using ImuravevSoft.Core.Attributes;
 using ImuravevSoft.GraphData;
+using System;
 
 namespace ImuravevSoft.Visualizer
 {
