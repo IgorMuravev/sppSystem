@@ -1,33 +1,127 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+﻿using ImuravevSoft.Core.Attributes;
 using ImuravevSoft.Core.Data;
+using ImuravevSoft.Core.Tool;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using ImuravevSoft.Core.Attributes;
+using System.Windows.Forms;
 
 namespace ImuravevSoft.Shell.Control
 {
     public partial class DataViewer : UserControl
     {
-        private readonly Dictionary<Guid, BaseData> datas = new Dictionary<Guid, BaseData>();
-        private readonly Dictionary<Type, TreeNode> types = new Dictionary<Type, TreeNode>();
-        private readonly Dictionary<Guid, Type> guidTypes = new Dictionary<Guid, Type>();
+        /// <summary>
+        /// По гуиду данные
+        /// </summary>
+        private readonly Dictionary<Guid, BaseData> guidData = new Dictionary<Guid, BaseData>();
+        /// <summary>
+        /// Под данным тринод
+        /// </summary>
+        private readonly Dictionary<BaseData, TreeNode> dataNode = new Dictionary<BaseData, TreeNode>();
+        /// <summary>
+        /// По типу можем узнать корневой узел
+        /// </summary>
+        private readonly Dictionary<Type, TreeNode> typeNode = new Dictionary<Type, TreeNode>();
+        /// <summary>
+        /// ПО гуиду узнает тип
+        /// </summary>
+        private readonly Dictionary<Guid, Type> guidType = new Dictionary<Guid, Type>();
+        /// <summary>
+        /// Разрешенные данные к использованию
+        /// </summary>
+        private readonly List<BaseData> usedData = new List<BaseData>();
 
-        public TreeNode TreeNodeByType(Type t)
+        private BaseTool tool = null;
+        private void OnToolChanged(object sender, EventArgs s)
         {
-            if (types.ContainsKey(t))
-                return types[t];
-            else
-                return null;
+            usedData.Clear();
+            tool = Main.Shell.OpenedTools.ActiveTool;
+            if (tool == null) return;
+            var reqData = tool.GetType().GetCustomAttributes(typeof(ReqDataAttribute), false) as ReqDataAttribute[];
+            foreach (var req in reqData)
+            {
+                var rootType = typeNode[req.Data];
+                foreach (TreeNode child in rootType.Nodes)
+                    usedData.Add(guidData[(Guid)child.Tag]);
+            }
+            treeView1.Invalidate();
         }
-        public void LoadDataTypes()
+        private void treeView1_MouseDown(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Right)
+            {
+                var node = treeView1.GetNodeAt(e.X, e.Y);
+                if (!typeNode.ContainsValue(node))
+                {
+                    var contextMenu = new ContextMenuStrip();
+                    contextMenu.Items.Add("Переименовать");
+                    contextMenu.Items[0].Click += DataViewer_Click;
+                    contextMenu.Show(treeView1, new Point(e.X, e.Y));
+                    treeView1.SelectedNode = node;
+                }
+            }
+        }
+        private void DataViewer_Click(object sender, EventArgs e)
+        {
+            var node = treeView1.SelectedNode;
+            if (!node.IsEditing)
+            {
+                node.BeginEdit();
+            }
+        }
+        private void treeView1_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            if (e.Label != null && e.Label.Length > 0)
+            {
+                var data = DataById((Guid)e.Node.Tag);
+                if (data != null)
+                {
+                    data.Name = e.Label;
+                }
+                e.Node.EndEdit(true);
+            }
+        }
+        private void treeView1_DrawNode(object sender, DrawTreeNodeEventArgs e)
+        {
+            e.Graphics.DrawString(e.Node.Text, treeView1.Font, Brushes.Black, e.Bounds);
+            if (tool == null) return;
+            if (!typeNode.ContainsValue(e.Node))
+            {
+                var data = guidData[(Guid)e.Node.Tag];
+                if (usedData.Contains(data))
+                {
+                    if (tool.UsedData.Contains(data))
+                        e.Graphics.DrawImage(Properties.Resources.check, treeView1.Width - e.Bounds.Height - 5, e.Bounds.Top, e.Bounds.Height, e.Bounds.Height);
+                    else
+                        e.Graphics.DrawImage(Properties.Resources.uncheck, treeView1.Width - e.Bounds.Height - 5, e.Bounds.Top, e.Bounds.Height, e.Bounds.Height);
+                }
+            }
+        }
+        private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (tool == null) return;
+            var node = treeView1.GetNodeAt(e.X, e.Y);
+            if (node != null && !typeNode.ContainsValue(node))
+            {
+                var data = guidData[(Guid)node.Tag];
+                if (node.Bounds.Contains(e.Location) && usedData.Contains(data))
+                    if (tool.UsedData.Contains(data))
+                        tool.UnuseData(data);
+                    else
+                        tool.UseData(data);
+            }
+            Refresh();
+        }
+
+
+        public void Init()
+        {
+            Main.Shell.OpenedTools.ToolChanged += OnToolChanged;
+
             treeView1.Nodes.Clear();
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";
             var files = Directory.GetFiles(path, "ImuravevSoft.*.dll");
@@ -42,35 +136,36 @@ namespace ImuravevSoft.Shell.Control
                     {
                         var node = new TreeNode(attr.Name);
 
-                        types.Add(t, node);
-                        guidTypes.Add(attr.TypeGuid, t);
+                        typeNode.Add(t, node);
+                        guidType.Add(attr.TypeGuid, t);
                     }
                 }
             }
-            treeView1.Nodes.AddRange(types.Values.ToArray());
+            treeView1.Nodes.AddRange(typeNode.Values.ToArray());
 
         }
         public DataViewer()
         {
             InitializeComponent();
+
         }
         public Dictionary<Guid, Type> TypesGuid
         {
             get
             {
-                return guidTypes;
+                return guidType;
             }
         }
         public BaseData DataById(Guid Id)
         {
-            if (datas.ContainsKey(Id))
-                return datas[Id];
+            if (guidData.ContainsKey(Id))
+                return guidData[Id];
             else
                 return null;
         }
         public BaseData[] AllDatas()
         {
-            return datas.Values.ToArray();
+            return guidData.Values.ToArray();
         }
         public void AddData(BaseData data)
         {
@@ -80,59 +175,13 @@ namespace ImuravevSoft.Shell.Control
         {
             for (int i = 0; i < range.Length; i++)
             {
-                datas.Add(range[i].Id, range[i]);
-                var rootNode = types[range[i].GetType()];
+                guidData.Add(range[i].Id, range[i]);
+                var rootNode = typeNode[range[i].GetType()];
                 var node = new TreeNode(range[i].Name)
                 {
                     Tag = range[i].Id
                 };
                 rootNode.Nodes.Add(node);
-            }
-        }
-
-        public IEnumerable<BaseData> Selected
-        {
-            get
-            {
-                return datas.Values.Where(x => x.IsSelected);
-            }
-        }
-
-        private void treeView1_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                var node = treeView1.GetNodeAt(e.X, e.Y);
-                if (!types.ContainsValue(node))
-                {
-                    var contextMenu = new ContextMenuStrip();
-                    contextMenu.Items.Add("Переименовать");
-                    contextMenu.Items[0].Click += DataViewer_Click;
-                    contextMenu.Show(treeView1, new Point(e.X, e.Y));
-                    treeView1.SelectedNode = node;
-                }
-            }
-        }
-
-        private void DataViewer_Click(object sender, EventArgs e)
-        {
-            var node = treeView1.SelectedNode;
-            if (!node.IsEditing)
-            {
-                node.BeginEdit();
-            }
-        }
-
-        private void treeView1_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
-        {
-            if (e.Label != null && e.Label.Length > 0)
-            {
-                var data = DataById((Guid)e.Node.Tag);
-                if (data != null)
-                {
-                    data.Name = e.Label;
-                }
-                e.Node.EndEdit(true);
             }
         }
     }

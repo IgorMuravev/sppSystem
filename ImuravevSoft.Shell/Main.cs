@@ -1,22 +1,17 @@
 ﻿using ImuravevSoft.Core.Attributes;
 using ImuravevSoft.Core.Data;
-using ImuravevSoft.Core.Tool;
 using ImuravevSoft.Shell.Control;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace ImuravevSoft.Shell
 {
     public partial class Main : Form
     {
-        public static  Main Shell;
+        public static Main Shell;
 
         public Main()
         {
@@ -25,10 +20,9 @@ namespace ImuravevSoft.Shell
             MessageList = messageList1;
             Tools = toolsPanel1;
             OpenedTools = toolTabs1;
-
             Main.Shell = this;
 
-            DataManager.LoadDataTypes();
+            DataManager.Init();
             Tools.LoadTools();
 
             MessageList.Echo("Программа запущена", MsgType.Info);
@@ -39,11 +33,9 @@ namespace ImuravevSoft.Shell
         public readonly ToolsPanel Tools;
         public readonly ToolTabs OpenedTools;
 
-
-
         public void SaveData(string fileName)
         {
-            var g = new GraphData.GraphData() {Name = "3121" };
+            var g = new GraphData.GraphData() { Name = "3121" };
             var g1 = new GraphData.GraphData() { Name = "ХУЙ" };
             DataManager.AddData(new[] { g, g1 });
             using (var writer = new BinaryWriter(File.OpenWrite(fileName)))

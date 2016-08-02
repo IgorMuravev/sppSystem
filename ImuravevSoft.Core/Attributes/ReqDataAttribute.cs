@@ -1,8 +1,4 @@
-﻿using ImuravevSoft.Core.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 
 namespace ImuravevSoft.Core.Attributes
 {

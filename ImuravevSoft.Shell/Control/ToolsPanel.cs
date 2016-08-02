@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.Reflection;
-using System.IO;
+﻿using ImuravevSoft.Core.Attributes;
 using ImuravevSoft.Core.Tool;
-using ImuravevSoft.Core.Attributes;
+using System;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Resources;
+using System.Windows.Forms;
 
 namespace ImuravevSoft.Shell.Control
 {

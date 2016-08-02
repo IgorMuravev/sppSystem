@@ -1,10 +1,6 @@
-﻿using ImuravevSoft.Core.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using ImuravevSoft.Core.Attributes;
+using ImuravevSoft.Core.Data;
 using System.IO;
-using ImuravevSoft.Core.Attributes;
 
 namespace ImuravevSoft.GraphData
 {

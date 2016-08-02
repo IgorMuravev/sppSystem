@@ -2,13 +2,8 @@
 using ImuravevSoft.Core.Tool;
 using ImuravevSoft.Shell;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using ImuravevSoft.Core.Data;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 
 namespace ImuravevSoft.GraphGen
 {
@@ -19,11 +14,20 @@ namespace ImuravevSoft.GraphGen
         public GraphGenTool()
         {
             InitializeComponent();
+            OnUseData += UseData;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        public GraphData.GraphData Graph { get; private set; }
+        public void UseData(object sender, EventArgs e)
         {
-            Main.Shell.MessageList.Echo("НАГЕНЕРИЛ НАХУЙ");
+            var g = UsedData.OfType<GraphData.GraphData>().FirstOrDefault();
+            if (g != null)
+            {
+                Graph = g;
+                label1.Text = Graph.Name;
+            }
         }
+
+
     }
 }
