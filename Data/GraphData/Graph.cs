@@ -24,21 +24,6 @@ namespace ImuravevSoft.GraphData
             Vertexes = vs;
             Edges = es;
         }
-        public void Save(string fileName)
-        {
-            Stream FileStream = File.Create(fileName);
-
-            FileStream.Close();
-        }
-        public static Graph Load(string fileName)
-        {
-            if (File.Exists(fileName))
-            {
-                Stream FileStream = File.OpenRead(fileName);
-
-            }
-            return null;
-        }
         public override void Load(BinaryReader reader)
         {
             Name = reader.ReadString();

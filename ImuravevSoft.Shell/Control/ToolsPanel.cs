@@ -52,8 +52,15 @@ namespace ImuravevSoft.Shell.Control
                         toolTip1.SetToolTip(btn, attr.Desc);
                         btn.Click += (sender, e) =>
                         {
-                            if (Main.Shell != null)
-                                Main.Shell.OpenedTools.AddTool(Activator.CreateInstance(t) as BaseTool);
+                            try
+                            {
+                                if (Main.Shell != null)
+                                    Main.Shell.OpenedTools.AddTool(Activator.CreateInstance(t) as BaseTool);
+                            }
+                            catch (Exception ex)
+                            {
+                                Main.Shell.MessageList.Echo(ex.ToString(), MsgType.Error);
+                            }
                         };
                         Controls.Add(btn);
                     }

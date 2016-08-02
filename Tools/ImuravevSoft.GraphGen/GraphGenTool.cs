@@ -42,8 +42,15 @@ namespace ImuravevSoft.GraphGen
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Graph = GraphGen.GetPlanarZoneGraph(new Location() { X = 0, Y = 0, Width = panel1.Width, Height = panel1.Height }, Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
-            DrawGraph();
+            try
+            {
+                Graph = GraphGen.GetPlanarZoneGraph(new Location() { X = 0, Y = 0, Width = panel1.Width, Height = panel1.Height }, Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
+                DrawGraph();
+            }
+            catch (Exception ex)
+            {
+                Main.Shell.MessageList.Echo(ex.ToString(), Shell.Control.MsgType.Error);
+            }
         }
         public void Draw(Graph d,Graphics g, Func<PointF, PointF> func = null)
         {
