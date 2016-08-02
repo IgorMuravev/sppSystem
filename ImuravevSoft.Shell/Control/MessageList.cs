@@ -18,7 +18,9 @@ namespace ImuravevSoft.Shell.Control
         }
         public void Echo(string msg, MsgType type = MsgType.Info)
         {
-            listView1.Items.Add(new ListViewItem(new[] { type.ToString(), DateTime.Now.ToString(), msg }));
+            var item = new ListViewItem(new[] {"", DateTime.Now.ToString(), msg });
+            item.ImageIndex = (int)type;
+            listView1.Items.Add(item);
         }
 
         public void Clear()

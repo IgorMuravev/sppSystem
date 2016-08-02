@@ -17,6 +17,7 @@ namespace ImuravevSoft.Shell.Control
         {
             var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\";
             var files = Directory.GetFiles(path, "ImuravevSoft.*.dll");
+            var left = 0;
             foreach (var f in files)
             {
                 var asm = Assembly.LoadFile(f);
@@ -26,20 +27,31 @@ namespace ImuravevSoft.Shell.Control
                     var attr = t.GetCustomAttributes(typeof(ToolAttribute), false).FirstOrDefault() as ToolAttribute;
                     if (t != default(object))
                     {
-                   
-                        var r = new ResourceManager(t);
-                        var icon =  r.GetObject("TypeIcon") as Icon;
+
+
                         var btn = new Button();
                         btn.Text = attr.Name;
                         btn.Height = Height;
                         btn.TextAlign = ContentAlignment.BottomCenter;
                         btn.ImageAlign = ContentAlignment.TopCenter;
-                        if (icon != null)
+                        btn.Left = left;
+                        left += btn.Width;
+                        try
                         {
-                            btn.Image = ResizeBitmap(icon.ToBitmap(), 32, 32);
+                            var r = new ResourceManager(t);
+                            var icon = r.GetObject("TypeIcon") as Icon;
+                            if (icon != null)
+                            {
+                                btn.Image = ResizeBitmap(icon.ToBitmap(), 32, 32);
+                            }
+                        }
+                        catch
+                        {
+                            Main.Shell.MessageList.Echo(String.Format("Иконка инструмента '{0}' не найдена", attr.Name), MsgType.Warning);
                         }
                         toolTip1.SetToolTip(btn, attr.Desc);
-                        btn.Click += (sender, e) => {
+                        btn.Click += (sender, e) =>
+                        {
                             if (Main.Shell != null)
                                 Main.Shell.OpenedTools.AddTool(Activator.CreateInstance(t) as BaseTool);
                         };
@@ -48,7 +60,6 @@ namespace ImuravevSoft.Shell.Control
                 }
             }
         }
-
         private static Bitmap ResizeBitmap(Bitmap sourceBMP, int width, int height)
         {
             Bitmap result = new Bitmap(width, height);
