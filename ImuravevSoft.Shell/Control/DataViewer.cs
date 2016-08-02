@@ -183,6 +183,7 @@ namespace ImuravevSoft.Shell.Control
                 };
                 rootNode.Nodes.Add(node);
             }
+            OnToolChanged(null, EventArgs.Empty);
         }
     }
 }

@@ -48,12 +48,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GraphGen.cs" />
     <Compile Include="GraphGenTool.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="GraphGenTool.Designer.cs">
       <DependentUpon>GraphGenTool.cs</DependentUpon>
     </Compile>
+    <Compile Include="Location.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GraphGenTool.resx">
       <DependentUpon>GraphGenTool.cs</DependentUpon>

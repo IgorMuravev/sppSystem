@@ -35,9 +35,6 @@ namespace ImuravevSoft.Shell
 
         public void SaveData(string fileName)
         {
-            var g = new GraphData.GraphData() { Name = "3121" };
-            var g1 = new GraphData.GraphData() { Name = "ХУЙ" };
-            DataManager.AddData(new[] { g, g1 });
             using (var writer = new BinaryWriter(File.OpenWrite(fileName)))
             {
                 var data = DataManager.AllDatas();

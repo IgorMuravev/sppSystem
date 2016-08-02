@@ -17,8 +17,10 @@ namespace ImuravevSoft.Core.Tool
             }
         }
 
-        public EventHandler OnUseData = null;
-        public EventHandler OnUnuseData = null;
+        public EventHandler AfterUseData = null;
+        public EventHandler AfterUnuseData = null;
+        public EventHandler BeforeUseData = null;
+        public EventHandler BeforeUnuseData = null;
 
         public virtual void UnuseData(BaseData data)
         {
@@ -26,6 +28,8 @@ namespace ImuravevSoft.Core.Tool
         }
         public virtual void UnuseData(BaseData[] datas)
         {
+            if (BeforeUnuseData != null)
+                BeforeUnuseData(null, EventArgs.Empty);
             var used = new List<BaseData>();
             foreach (var data in UsedData)
             {
@@ -33,8 +37,8 @@ namespace ImuravevSoft.Core.Tool
                     used.Add(data);
             }
             usedData = used;
-            if (OnUnuseData != null)
-                OnUnuseData(null, EventArgs.Empty);
+            if (AfterUnuseData != null)
+                AfterUnuseData(null, EventArgs.Empty);
         }
         public virtual void UseData(BaseData data)
         {
@@ -42,9 +46,11 @@ namespace ImuravevSoft.Core.Tool
         }
         public virtual void UseData(BaseData[] datas)
         {
+            if (BeforeUseData != null)
+                BeforeUseData(null, EventArgs.Empty);
             UsedData.AddRange(datas);
-            if (OnUseData != null)
-                OnUseData(null, EventArgs.Empty);
+            if (AfterUseData != null)
+                AfterUseData(null, EventArgs.Empty);
         }
 
     }
