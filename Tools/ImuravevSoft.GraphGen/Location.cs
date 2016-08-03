@@ -13,9 +13,9 @@ namespace ImuravevSoft.GraphGen
 
 
         public static Random rnd = new Random();
-        public Point GetRandomPoint()
+        public VertexPoint GetRandomPoint()
         {
-            return new Point(Width * rnd.NextDouble() + X, Height * rnd.NextDouble() + Y);
+            return new VertexPoint(Width * rnd.NextDouble() + X, Height * rnd.NextDouble() + Y);
         }
     }
 }

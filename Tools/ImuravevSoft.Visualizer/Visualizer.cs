@@ -2,21 +2,125 @@
 using ImuravevSoft.Core.Tool;
 using ImuravevSoft.GraphData;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace ImuravevSoft.Visualizer
 {
-    [Tool("Визуализатор графов","Позволяет отображать графы на плоскости")]
+    [Tool("Визуализатор графов", "Позволяет отображать графы на плоскости")]
     [ReqData(typeof(Graph))]
     public partial class Visualizer : BaseTool
     {
-        private void UsedData(object sender, EventArgs e)
-        {
+        private bool canMoving = false;
+        private float dx = 0;
+        private float dy = 0;
+        private Point prevPoint  ;
 
+        public Graph Graph { get; private set; }
+        public float ZoomScale { get; private set; }
+        private void AUsedData(object sender, EventArgs e)
+        {
+            Graph = UsedData.OfType<Graph>().FirstOrDefault();
+            DrawTo();
+        }
+        private void BUsedData(object sender, EventArgs e)
+        {
+            var g = UsedData.OfType<Graph>().ToArray();
+            UnuseData(g);
+        }
+
+        private void DrawTo()
+        {
+            if (Graph != null)
+            {
+                var bmp = new Bitmap(Width, Height);
+                float kx = ZoomScale * Width / Graph.Border.Width;
+                float ky = ZoomScale * Height / Graph.Border.Height;
+
+                var f = new Func<VertexPoint, VertexPoint>(p => {
+                    return new VertexPoint(kx*(p.X- Graph.Border.X) + dx, Height - ky*(p.Y - Graph.Border.Y) + dy);
+                });
+
+                var points = new Dictionary<Vertex, VertexPoint>();
+                using (var g = Graphics.FromImage(bmp))
+                {
+                    foreach (var v in Graph.Vertexes)
+                    {
+                        var p = f(v);
+                        points.Add(v, p);
+                        g.FillEllipse(Brushes.Blue, (float)p.X - 3f, (float)p.Y - 3f, 6f, 6f);
+                    }
+
+                    foreach (var e in Graph.Edges)
+                    {
+                        var p1 = points[e.V1];
+                        var p2 = points[e.V2];
+                        g.DrawLine(Pens.Black, (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
+                    }
+                   
+                }
+                using (var g = CreateGraphics())
+                {
+                    g.FillRectangle(Brushes.White, 0, 0, Width, Height);
+                    g.DrawImage(bmp, 0, 0);
+                }
+                   
+            }
         }
         public Visualizer()
         {
+
             InitializeComponent();
-            AfterUseData += UsedData;
+            prevPoint = new Point(0, 0);
+            ZoomScale = 1;
+            MouseWheel += Visualizer_MouseWheel;
+            AfterUseData += AUsedData;
+            BeforeUseData += BUsedData;
+
+        }
+
+        private void Visualizer_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            trackBar1.Value += e.Delta * 10;
+            if (trackBar1.Value > trackBar1.Maximum) trackBar1.Value = trackBar1.Maximum;
+            if (trackBar1.Value < trackBar1.Minimum) trackBar1.Value = trackBar1.Minimum;
+        }
+
+        private void Visualizer_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                canMoving = true;
+                prevPoint = e.Location;
+            }
+        }
+
+        private void Visualizer_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            canMoving = false;
+        }
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            ZoomScale = trackBar1.Value / 100f;
+            DrawTo();
+        }
+
+        private void Visualizer_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (canMoving)
+            {
+                dx += (e.X - prevPoint.X) * 0.7f ;
+                dy += (e.Y -  prevPoint.Y) *0.7f ;
+                prevPoint = e.Location;
+                DrawTo();
+            }
+        }
+
+        private void Visualizer_SizeChanged(object sender, EventArgs e)
+        {
+            DrawTo();
         }
     }
 }

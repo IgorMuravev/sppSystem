@@ -3,10 +3,10 @@
 namespace ImuravevSoft.GraphData
 {
     [Serializable]
-    public class Vertex : Point
+    public class Vertex : VertexPoint
     {
         public string Caption { get; set; }
-        public Vertex(Point p, string caption) : base(p.X, p.Y)
+        public Vertex(VertexPoint p, string caption) : base(p.X, p.Y)
         {
             Caption = caption;
         }

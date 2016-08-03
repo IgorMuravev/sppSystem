@@ -3,48 +3,48 @@
 namespace ImuravevSoft.GraphData
 {
     [Serializable]
-    public class Point
+    public class VertexPoint
     {
         public double X { get; private set; }
         public double Y { get;  private set; }
 
-        public Point(double x, double y)
+        public VertexPoint(double x, double y)
         {
             X = x;
             Y = y;
         }
 
-        public double Distance(Point p)
+        public double Distance(VertexPoint p)
         {
             return Math.Sqrt((p.X - X) * (p.X - X) + (p.Y - Y) * (p.Y - Y));
         }
 
-        public double Distance2(Point p)
+        public double Distance2(VertexPoint p)
         {
             return (p.X - X) * (p.X - X) + (p.Y - Y) * (p.Y - Y);
         }
 
-        public static double Distance(Point a, Point b)
+        public static double Distance(VertexPoint a, VertexPoint b)
         {
             return Math.Sqrt((a.X - b.X) * (a.X - b.X) + (a.Y - b.Y) * (a.Y - b.Y));
         }
 
-        public static Point operator +(Point a, Point b)
+        public static VertexPoint operator +(VertexPoint a, VertexPoint b)
         {
-            return new Point(a.X + b.X, a.Y + b.Y);
+            return new VertexPoint(a.X + b.X, a.Y + b.Y);
         }
-        public static Point operator -(Point a, Point b)
+        public static VertexPoint operator -(VertexPoint a, VertexPoint b)
         {
-            return new Point(a.X - b.X, a.Y - b.Y);
+            return new VertexPoint(a.X - b.X, a.Y - b.Y);
         }
 
-        public static double operator *(Point a, Point b)
+        public static double operator *(VertexPoint a, VertexPoint b)
         {
             return a.X * b.X + a.Y * b.Y;
         }
-        public static Point operator *(double a, Point b)
+        public static VertexPoint operator *(double a, VertexPoint b)
         {
-            return new Point(a * b.X, a * b.Y);
+            return new VertexPoint(a * b.X, a * b.Y);
         }
 
 

@@ -61,7 +61,7 @@ namespace ImuravevSoft.GraphGen
                 {
                     A.Remove(a);
                     B.Add(a);
-                    result.Add(new Edge(a, b, Point.Distance(a, b)));
+                    result.Add(new Edge(a, b, VertexPoint.Distance(a, b)));
                 }
             }
             return result;
@@ -143,7 +143,7 @@ namespace ImuravevSoft.GraphGen
                     var r = random.NextDouble();
                     var x = prevroot + (nextroot - prevroot) * r;
                     var y = RandomY(x, location.Height, location, zoneCount);
-                    var vertex = new Vertex(new Point(x, y), "");
+                    var vertex = new Vertex(new VertexPoint(x, y), "");
                     list.Add(vertex);
                 }
                 vertexes.AddRange(list);
@@ -160,7 +160,7 @@ namespace ImuravevSoft.GraphGen
                     var r = random.NextDouble();
                     var x = prevroot + (nextroot - prevroot) * r;
                     var y = RandomY(x, 0, location, zoneCount);
-                    var vertex = new Vertex(new Point(x, y), "");
+                    var vertex = new Vertex(new VertexPoint(x, y), "");
                     list.Add(vertex);
                 }
                 vertexes.AddRange(list);

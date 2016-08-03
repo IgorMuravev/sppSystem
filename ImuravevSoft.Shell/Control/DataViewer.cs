@@ -57,12 +57,25 @@ namespace ImuravevSoft.Shell.Control
                 var node = treeView1.GetNodeAt(e.X, e.Y);
                 if (!typeNode.ContainsValue(node))
                 {
+                    treeView1.SelectedNode = node;
                     var contextMenu = new ContextMenuStrip();
                     contextMenu.Items.Add("Переименовать");
+                    contextMenu.Items.Add("Удалить");
                     contextMenu.Items[0].Click += DataViewer_Click;
+                    contextMenu.Items[1].Click += DataViewer_Remove;
                     contextMenu.Show(treeView1, new Point(e.X, e.Y));
                     treeView1.SelectedNode = node;
                 }
+            }
+        }
+
+        private void DataViewer_Remove(object sender, EventArgs e)
+        {
+         
+            var node = treeView1.SelectedNode;
+            if (MessageBox.Show(String.Format("Вы действительно хотите удалить '{0}' ?", node.Text), "Подтвердите", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                RemoveData(guidData[(Guid)node.Tag]);
             }
         }
         private void DataViewer_Click(object sender, EventArgs e)
@@ -135,13 +148,13 @@ namespace ImuravevSoft.Shell.Control
                     if (t != default(object))
                     {
                         var node = new TreeNode(attr.Name);
-
                         typeNode.Add(t, node);
                         guidType.Add(attr.TypeGuid, t);
                     }
                 }
             }
             treeView1.Nodes.AddRange(typeNode.Values.ToArray());
+        
 
         }
         public DataViewer()
@@ -181,7 +194,26 @@ namespace ImuravevSoft.Shell.Control
                 {
                     Tag = range[i].Id
                 };
+                dataNode.Add(range[i], node);
                 rootNode.Nodes.Add(node);
+                rootNode.Expand();
+            }
+            OnToolChanged(null, EventArgs.Empty);
+        }
+
+        public void RemoveData(BaseData data)
+        {
+            RemoveData(new[] { data });
+        }
+        public void RemoveData(BaseData[] range)
+        {
+            for (int i = 0; i < range.Length; i++)
+            {
+
+                var node = dataNode[range[i]];
+                var guid = (Guid)node.Tag;
+                guidData.Remove(guid);
+                node.Remove();
             }
             OnToolChanged(null, EventArgs.Empty);
         }
