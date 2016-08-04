@@ -13,9 +13,16 @@ namespace ImuravevSoft.Shell.Control
         public ToolTabs()
         {
             InitializeComponent();
-            
+
         }
         private readonly Dictionary<TabPage, BaseTool> openedTools = new Dictionary<TabPage, BaseTool>();
+        public List<BaseTool> OpenedTools
+        {
+            get
+            {
+                return openedTools.Values.ToList();
+            }
+        }
         public void AddTool(BaseTool tool)
         {
             var attr = tool.GetType().GetCustomAttributes(typeof(ToolAttribute), false).FirstOrDefault() as ToolAttribute;
@@ -27,7 +34,7 @@ namespace ImuravevSoft.Shell.Control
                 openedTools.Add(page, tool);
                 tabControl1.TabPages.Add(page);
             }
-            
+
 
         }
         public BaseTool ActiveTool
@@ -45,16 +52,15 @@ namespace ImuravevSoft.Shell.Control
         private void tabControl1_MouseDown(object sender, MouseEventArgs e)
         {
             Rectangle r = tabControl1.GetTabRect(this.tabControl1.SelectedIndex);
-            Rectangle closeButton = new Rectangle(r.Right - 10, r.Top , 10, r.Height);
+            Rectangle closeButton = new Rectangle(r.Right - 10, r.Top, 10, r.Height);
             if (closeButton.Contains(e.Location))
                 this.tabControl1.TabPages.Remove(this.tabControl1.SelectedTab);
         }
         private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
-           
-            e.Graphics.DrawString("x", e.Font, Brushes.LightGray, e.Bounds.Right -10, e.Bounds.Top);
+            e.Graphics.DrawString("x", e.Font, Brushes.LightGray, e.Bounds.Right - 10, e.Bounds.Top);
             e.Graphics.DrawString(this.tabControl1.TabPages[e.Index].Text, e.Font, Brushes.Black, e.Bounds.Left, e.Bounds.Top + 4);
-            e.DrawFocusRectangle();
+       
 
         }
         public event EventHandler ToolChanged = null;
@@ -62,6 +68,8 @@ namespace ImuravevSoft.Shell.Control
         {
             if (ToolChanged != null)
                 ToolChanged(null, EventArgs.Empty);
+            if (ActiveTool != null)
+                ActiveTool.ShowInToolTabs();
         }
         private void tabControl1_ControlAdded(object sender, ControlEventArgs e)
         {

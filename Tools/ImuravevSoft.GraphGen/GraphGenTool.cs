@@ -24,6 +24,8 @@ namespace ImuravevSoft.GraphGen
             InitializeComponent();
             AfterUseData += AUseData;
             BeforeUseData += BUseData;
+            
+           
         }
 
 

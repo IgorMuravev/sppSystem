@@ -22,12 +22,26 @@ namespace ImuravevSoft.Visualizer
         private void AUsedData(object sender, EventArgs e)
         {
             Graph = UsedData.OfType<Graph>().FirstOrDefault();
+            dx = 0;
+            dy = 0;
+            ZoomScale = 1;
             DrawTo();
         }
         private void BUsedData(object sender, EventArgs e)
         {
             var g = UsedData.OfType<Graph>().ToArray();
             UnuseData(g);
+        }
+        
+        private void AUnusedData(object sender, EventArgs e)
+        {
+            if (Graph != null && !UsedData.Contains(Graph))
+                Graph = null;
+        }
+
+        public override void ShowInToolTabs()
+        {
+            DrawTo();
         }
 
         private void DrawTo()
@@ -77,6 +91,7 @@ namespace ImuravevSoft.Visualizer
             MouseWheel += Visualizer_MouseWheel;
             AfterUseData += AUsedData;
             BeforeUseData += BUsedData;
+            AfterUnuseData += AUnusedData;
 
         }
 
@@ -121,6 +136,10 @@ namespace ImuravevSoft.Visualizer
         private void Visualizer_SizeChanged(object sender, EventArgs e)
         {
             DrawTo();
+        }
+
+        private void Visualizer_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        {
         }
     }
 }

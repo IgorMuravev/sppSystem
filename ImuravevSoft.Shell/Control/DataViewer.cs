@@ -209,9 +209,15 @@ namespace ImuravevSoft.Shell.Control
         {
             for (int i = 0; i < range.Length; i++)
             {
-
+                
                 var node = dataNode[range[i]];
                 var guid = (Guid)node.Tag;
+                var data = guidData[guid];
+                foreach (var tool in Main.Shell.OpenedTools.OpenedTools)
+                {
+                    if (tool.UsedData.Contains(data))
+                        tool.UnuseData(data);
+                }
                 guidData.Remove(guid);
                 node.Remove();
             }

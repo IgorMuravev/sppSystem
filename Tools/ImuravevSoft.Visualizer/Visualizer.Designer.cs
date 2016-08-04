@@ -55,6 +55,7 @@
             this.Name = "Visualizer";
             this.Size = new System.Drawing.Size(861, 555);
             this.SizeChanged += new System.EventHandler(this.Visualizer_SizeChanged);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Visualizer_Paint);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Visualizer_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Visualizer_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Visualizer_MouseUp);

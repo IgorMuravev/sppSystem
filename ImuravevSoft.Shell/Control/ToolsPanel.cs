@@ -38,12 +38,15 @@ namespace ImuravevSoft.Shell.Control
                         left += btn.Width;
                         try
                         {
-                            var r = new ResourceManager(t);
-                            var icon = r.GetObject("TypeIcon") as Icon;
+
+                            var r = new ResourceManager(asm.GetName().Name+".Properties.Resources", asm);
+                            var icon = r.GetObject("ToolIcon") as Bitmap;
                             if (icon != null)
                             {
-                                btn.Image = ResizeBitmap(icon.ToBitmap(), 32, 32);
+                                btn.Image = ResizeBitmap(icon, 48, 48);
                             }
+                            else
+                                Main.Shell.MessageList.Echo(String.Format("Иконка инструмента '{0}' не найдена", attr.Name), MsgType.Warning);
                         }
                         catch
                         {
