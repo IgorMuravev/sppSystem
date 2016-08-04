@@ -51,10 +51,19 @@ namespace ImuravevSoft.Shell.Control
         }
         private void tabControl1_MouseDown(object sender, MouseEventArgs e)
         {
-            Rectangle r = tabControl1.GetTabRect(this.tabControl1.SelectedIndex);
-            Rectangle closeButton = new Rectangle(r.Right - 10, r.Top, 10, r.Height);
-            if (closeButton.Contains(e.Location))
-                this.tabControl1.TabPages.Remove(this.tabControl1.SelectedTab);
+            if (e.Button == MouseButtons.Left)
+            {
+                Rectangle r = tabControl1.GetTabRect(this.tabControl1.SelectedIndex);
+                Rectangle closeButton = new Rectangle(r.Right - 10, r.Top, 10, r.Height);
+                if (closeButton.Contains(e.Location))
+                    this.tabControl1.TabPages.Remove(this.tabControl1.SelectedTab);
+            }
+            if (e.Button == MouseButtons.Right)
+            {
+                Rectangle r = tabControl1.GetTabRect(this.tabControl1.SelectedIndex);
+                if (r.Contains(e.Location))
+                    contextMenuStrip1.Show(this,e.Location);
+            }
         }
         private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
         {
@@ -77,6 +86,38 @@ namespace ImuravevSoft.Shell.Control
             tabControl1.SelectTab(tabControl1.TabCount - 1);
             if (tabControl1.TabCount == 1)
                 tabControl1_Selected(sender, null);
+        }
+
+        private void закрытьВсеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (TabPage tab in tabControl1.TabPages)
+            {
+                tab.Controls[0].Dispose();
+            }
+            tabControl1.TabPages.Clear();
+        }
+
+        private void закрытьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tab = tabControl1.SelectedTab;
+            tab.Controls[0].Dispose();
+            tabControl1.TabPages.Remove(tab);
+        }
+
+        private void закрытьВсеКромеЭтоToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var selTab = tabControl1.SelectedTab;
+            var toRemove = new List<TabPage>();
+            foreach (TabPage tab in tabControl1.TabPages)
+            {
+                if (selTab != tab)
+                {
+                    tab.Controls[0].Dispose();
+                    toRemove.Add(tab);
+                }
+            }
+            for (int i = 0; i < toRemove.Count; i++)
+                tabControl1.TabPages.Remove(toRemove[i]);
         }
     }
 }
