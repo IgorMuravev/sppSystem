@@ -29,7 +29,9 @@
         private void InitializeComponent()
         {
             this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // trackBar1
@@ -46,21 +48,30 @@
             this.trackBar1.Value = 100;
             this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(861, 555);
+            this.pictureBox1.TabIndex = 1;
+            this.pictureBox1.TabStop = false;
+            this.pictureBox1.SizeChanged += new System.EventHandler(this.Visualizer_SizeChanged);
+            this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Visualizer_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Visualizer_MouseMove);
+            this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Visualizer_MouseUp);
+            // 
             // Visualizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.trackBar1);
+            this.Controls.Add(this.pictureBox1);
             this.DoubleBuffered = true;
             this.Name = "Visualizer";
             this.Size = new System.Drawing.Size(861, 555);
-            this.SizeChanged += new System.EventHandler(this.Visualizer_SizeChanged);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.Visualizer_Paint);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Visualizer_MouseDown);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Visualizer_MouseMove);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Visualizer_MouseUp);
-            this.Resize += new System.EventHandler(this.Visualizer_SizeChanged);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -69,5 +80,6 @@
         #endregion
 
         private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

@@ -15,7 +15,7 @@ namespace ImuravevSoft.Visualizer
         private bool canMoving = false;
         private float dx = 0;
         private float dy = 0;
-        private Point prevPoint  ;
+        private Point prevPoint;
 
         public Graph Graph { get; private set; }
         public float ZoomScale { get; private set; }
@@ -32,7 +32,7 @@ namespace ImuravevSoft.Visualizer
             var g = UsedData.OfType<Graph>().ToArray();
             UnuseData(g);
         }
-        
+
         private void AUnusedData(object sender, EventArgs e)
         {
             if (Graph != null && !UsedData.Contains(Graph))
@@ -52,8 +52,9 @@ namespace ImuravevSoft.Visualizer
                 float kx = ZoomScale * Width / Graph.Border.Width;
                 float ky = ZoomScale * Height / Graph.Border.Height;
 
-                var f = new Func<VertexPoint, VertexPoint>(p => {
-                    return new VertexPoint(kx*(p.X- Graph.Border.X) + dx, Height - ky*(p.Y - Graph.Border.Y) + dy);
+                var f = new Func<VertexPoint, VertexPoint>(p =>
+                {
+                    return new VertexPoint(kx * (p.X - Graph.Border.X) + dx, Height - ky * (p.Y - Graph.Border.Y) + dy);
                 });
 
                 var points = new Dictionary<Vertex, VertexPoint>();
@@ -72,14 +73,10 @@ namespace ImuravevSoft.Visualizer
                         var p2 = points[e.V2];
                         g.DrawLine(Pens.Black, (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
                     }
-                   
+
                 }
-                using (var g = CreateGraphics())
-                {
-                    g.FillRectangle(Brushes.White, 0, 0, Width, Height);
-                    g.DrawImage(bmp, 0, 0);
-                }
-                   
+                pictureBox1.Image = bmp;
+
             }
         }
         public Visualizer()
@@ -88,7 +85,7 @@ namespace ImuravevSoft.Visualizer
             InitializeComponent();
             prevPoint = new Point(0, 0);
             ZoomScale = 1;
-            MouseWheel += Visualizer_MouseWheel;
+            pictureBox1.MouseWheel += Visualizer_MouseWheel;
             AfterUseData += AUsedData;
             BeforeUseData += BUsedData;
             AfterUnuseData += AUnusedData;
@@ -97,9 +94,13 @@ namespace ImuravevSoft.Visualizer
 
         private void Visualizer_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            trackBar1.Value += e.Delta * 10;
-            if (trackBar1.Value > trackBar1.Maximum) trackBar1.Value = trackBar1.Maximum;
-            if (trackBar1.Value < trackBar1.Minimum) trackBar1.Value = trackBar1.Minimum;
+            var adding = trackBar1.Value + e.Delta / 10;
+            if (adding > trackBar1.Maximum)
+                trackBar1.Value = trackBar1.Maximum;
+            else if (adding < trackBar1.Minimum)
+                trackBar1.Value = trackBar1.Minimum;
+            else
+                trackBar1.Value = adding;
         }
 
         private void Visualizer_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -108,6 +109,10 @@ namespace ImuravevSoft.Visualizer
             {
                 canMoving = true;
                 prevPoint = e.Location;
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Middle)
+            {
+                pictureBox1.Focus();
             }
         }
 
@@ -126,11 +131,13 @@ namespace ImuravevSoft.Visualizer
         {
             if (canMoving)
             {
-                dx += (e.X - prevPoint.X) * 0.7f ;
-                dy += (e.Y -  prevPoint.Y) *0.7f ;
+                dx += (e.X - prevPoint.X) * 0.7f;
+                dy += (e.Y - prevPoint.Y) * 0.7f;
                 prevPoint = e.Location;
                 DrawTo();
             }
+            if (!pictureBox1.Focused)
+                pictureBox1.Focus();
         }
 
         private void Visualizer_SizeChanged(object sender, EventArgs e)
@@ -138,8 +145,5 @@ namespace ImuravevSoft.Visualizer
             DrawTo();
         }
 
-        private void Visualizer_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
-        {
-        }
     }
 }

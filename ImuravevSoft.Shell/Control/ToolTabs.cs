@@ -63,6 +63,7 @@ namespace ImuravevSoft.Shell.Control
        
 
         }
+
         public event EventHandler ToolChanged = null;
         private void tabControl1_Selected(object sender, TabControlEventArgs e)
         {
