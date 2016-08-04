@@ -56,7 +56,10 @@ namespace ImuravevSoft.Shell.Control
                 Rectangle r = tabControl1.GetTabRect(this.tabControl1.SelectedIndex);
                 Rectangle closeButton = new Rectangle(r.Right - 10, r.Top, 10, r.Height);
                 if (closeButton.Contains(e.Location))
+                {
+                    openedTools.Remove(this.tabControl1.SelectedTab);
                     this.tabControl1.TabPages.Remove(this.tabControl1.SelectedTab);
+                }
             }
             if (e.Button == MouseButtons.Right)
             {
@@ -87,7 +90,6 @@ namespace ImuravevSoft.Shell.Control
             if (tabControl1.TabCount == 1)
                 tabControl1_Selected(sender, null);
         }
-
         private void закрытьВсеToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (TabPage tab in tabControl1.TabPages)
@@ -96,14 +98,12 @@ namespace ImuravevSoft.Shell.Control
             }
             tabControl1.TabPages.Clear();
         }
-
         private void закрытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var tab = tabControl1.SelectedTab;
             tab.Controls[0].Dispose();
             tabControl1.TabPages.Remove(tab);
         }
-
         private void закрытьВсеКромеЭтоToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var selTab = tabControl1.SelectedTab;

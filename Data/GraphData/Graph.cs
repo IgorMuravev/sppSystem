@@ -8,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ImuravevSoft.GraphData
 {
-    [DataTree("Графы", "29712F03-947C-41D2-9A21-A7DFEA178448")]
+    [DataTree("Графы")]
     public class Graph : BaseData
     {
         [Serializable]
@@ -30,7 +30,7 @@ namespace ImuravevSoft.GraphData
                 if (v.Y > ymax) ymax = v.Y;
                 if (v.Y < ymin) ymin = v.Y;
             }
-            Border = new Rectangle((int)xmin , (int)ymin, (int)(xmax - xmin ), (int)(ymax - ymin ));
+            Border = new Rectangle((int)xmin, (int)ymin, (int)(xmax - xmin), (int)(ymax - ymin));
         }
         public Rectangle Border { get; private set; }
         public List<Vertex> Vertexes { get; private set; }
@@ -52,8 +52,7 @@ namespace ImuravevSoft.GraphData
         }
         public override void Load(BinaryReader reader)
         {
-            Name = reader.ReadString();
-         
+            base.Load(reader);
             BinaryFormatter deserializer = new BinaryFormatter();
             var result = deserializer.Deserialize(reader.BaseStream) as GraphStruct;
             Vertexes = result.Vertexes;
@@ -62,7 +61,7 @@ namespace ImuravevSoft.GraphData
         }
         public override void Save(BinaryWriter writer)
         {
-            writer.Write(Name);
+            base.Save(writer);
             BinaryFormatter serializer = new BinaryFormatter();
             serializer.Serialize(writer.BaseStream, new GraphStruct() { Vertexes = this.Vertexes, Edges = this.Edges });
         }

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.IO;
+using ImuravevSoft.Shell;
 
 namespace ImuravevSoft.Visualizer
 {
@@ -42,6 +44,19 @@ namespace ImuravevSoft.Visualizer
         public override void ShowInToolTabs()
         {
             DrawTo();
+        }
+
+        public override void LoadTool(BinaryReader reader)
+        {
+            if (reader.ReadBoolean())
+                Graph = Main.Shell.DataManager.DataById(new Guid(reader.ReadString())) as Graph;
+        }
+
+        public override void SaveTool(BinaryWriter writer)
+        {
+            writer.Write(Graph != null);
+            if (Graph != null)
+                writer.Write(Graph.Id.ToString());
         }
 
         private void DrawTo()

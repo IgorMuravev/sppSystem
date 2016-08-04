@@ -1,10 +1,9 @@
-﻿using ImuravevSoft.Core.Attributes;
-using ImuravevSoft.Core.Data;
+﻿using ImuravevSoft.Core.Data;
+using ImuravevSoft.Core.Tool;
 using ImuravevSoft.Shell.Control;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace ImuravevSoft.Shell
@@ -41,13 +40,18 @@ namespace ImuravevSoft.Shell
                 writer.Write(data.Length);
                 for (int i = 0; i < data.Length; i++)
                 {
-                    var attr = data[i].GetType().GetCustomAttributes(typeof(DataTreeAttribute), false).FirstOrDefault() as DataTreeAttribute;
-                    if (attr != default(Object))
-                    {
-                        writer.Write(attr.TypeGuid.ToString());
-                        data[i].Save(writer);
-                    }
+                    var name = data[i].GetType().FullName + "," + data[i].GetType().Assembly.GetName().Name;
+                    writer.Write(name);
+                    data[i].Save(writer);
 
+                }
+                var tools = OpenedTools.OpenedTools;
+                writer.Write(tools.Count);
+                for (int i = 0; i < tools.Count; i++)
+                {
+                    var name = tools[i].GetType().FullName + "," + tools[i].GetType().Assembly.GetName().Name;
+                    writer.Write(name);
+                    tools[i].SaveTool(writer);
                 }
             }
         }
@@ -60,14 +64,23 @@ namespace ImuravevSoft.Shell
                 int count = reader.ReadInt32();
                 for (int i = 0; i < count; i++)
                 {
-                    var guid = new Guid(reader.ReadString());
-                    var type = DataManager.TypesGuid[guid];
+                    var name = reader.ReadString();
+                    var type = Type.GetType(name);
                     var instance = Activator.CreateInstance(type) as BaseData;
                     instance.Load(reader);
                     loadedData.Add(instance);
                 }
+                DataManager.AddData(loadedData.ToArray());
+                count = reader.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    var name = reader.ReadString();
+                    var type = Type.GetType(name);
+                    var instance = Activator.CreateInstance(type) as BaseTool;
+                    instance.LoadTool(reader);
+                    OpenedTools.AddTool(instance);
+                }
             }
-            DataManager.AddData(loadedData.ToArray());
         }
 
         private void загрузитьToolStripMenuItem_Click(object sender, EventArgs e)

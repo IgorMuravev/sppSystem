@@ -23,9 +23,17 @@ namespace ImuravevSoft.Core.Data
             id = Guid.NewGuid();
 
         }
-       
 
-        public abstract void Save(BinaryWriter writer);
-        public abstract void Load(BinaryReader reader);
+
+        public virtual void Save(BinaryWriter writer)
+        {
+            writer.Write(Name);
+            writer.Write(id.ToString());
+        }
+        public virtual void Load(BinaryReader reader)
+        {
+            Name = reader.ReadString();
+            id = new Guid(reader.ReadString());
+        }
     }
 }

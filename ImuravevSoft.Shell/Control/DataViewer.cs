@@ -26,10 +26,7 @@ namespace ImuravevSoft.Shell.Control
         /// По типу можем узнать корневой узел
         /// </summary>
         private readonly Dictionary<Type, TreeNode> typeNode = new Dictionary<Type, TreeNode>();
-        /// <summary>
-        /// ПО гуиду узнает тип
-        /// </summary>
-        private readonly Dictionary<Guid, Type> guidType = new Dictionary<Guid, Type>();
+
         /// <summary>
         /// Разрешенные данные к использованию
         /// </summary>
@@ -149,7 +146,6 @@ namespace ImuravevSoft.Shell.Control
                     {
                         var node = new TreeNode(attr.Name);
                         typeNode.Add(t, node);
-                        guidType.Add(attr.TypeGuid, t);
                     }
                 }
             }
@@ -161,13 +157,6 @@ namespace ImuravevSoft.Shell.Control
         {
             InitializeComponent();
 
-        }
-        public Dictionary<Guid, Type> TypesGuid
-        {
-            get
-            {
-                return guidType;
-            }
         }
         public BaseData DataById(Guid Id)
         {

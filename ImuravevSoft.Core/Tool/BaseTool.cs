@@ -1,6 +1,7 @@
 ﻿using ImuravevSoft.Core.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -58,6 +59,14 @@ namespace ImuravevSoft.Core.Tool
 
             if (AfterUseData != null)
                 AfterUseData(null, EventArgs.Empty);
+        }
+
+        public virtual void LoadTool(BinaryReader reader)
+        { }
+
+        public virtual void SaveTool(BinaryWriter writer)
+        {
+
         }
 
     }

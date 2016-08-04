@@ -58,6 +58,10 @@
       <Project>{8628c5fc-4a07-422e-8a96-209ade500cde}</Project>
       <Name>ImuravevSoft.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ImuravevSoft.Shell\ImuravevSoft.Shell.csproj">
+      <Project>{0e6c6ee0-ec8e-41a5-89c5-0b908a2409a0}</Project>
+      <Name>ImuravevSoft.Shell</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx" />
