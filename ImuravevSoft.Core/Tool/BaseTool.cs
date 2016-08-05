@@ -61,12 +61,27 @@ namespace ImuravevSoft.Core.Tool
                 AfterUseData(null, EventArgs.Empty);
         }
 
-        public virtual void LoadTool(BinaryReader reader)
-        { }
 
-        public virtual void SaveTool(BinaryWriter writer)
+        // TO-DO
+        public void LoadTool(BinaryReader reader, Dictionary<Guid, BaseData> d)
         {
+            int count = reader.ReadInt32();
+            var dataInUse = new BaseData[count];
+            for (int i = 0; i < count; i++)
+            {
+                var data = d[(new Guid(reader.ReadString()))];
+                dataInUse[i]= data;
+            }
+            UseData(dataInUse);
+        }
 
+        public void SaveTool(BinaryWriter writer)
+        {
+            writer.Write(usedData.Count);
+            foreach (var d in usedData)
+            {
+                writer.Write(d.Id.ToString());
+            }
         }
 
     }

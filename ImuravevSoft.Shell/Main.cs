@@ -77,7 +77,7 @@ namespace ImuravevSoft.Shell
                     var name = reader.ReadString();
                     var type = Type.GetType(name);
                     var instance = Activator.CreateInstance(type) as BaseTool;
-                    instance.LoadTool(reader);
+                    instance.LoadTool(reader, DataManager.GuidData);
                     OpenedTools.AddTool(instance);
                 }
             }

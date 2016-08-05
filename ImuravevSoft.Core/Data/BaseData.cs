@@ -23,8 +23,6 @@ namespace ImuravevSoft.Core.Data
             id = Guid.NewGuid();
 
         }
-
-
         public virtual void Save(BinaryWriter writer)
         {
             writer.Write(Name);

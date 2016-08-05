@@ -68,7 +68,7 @@ namespace ImuravevSoft.Shell.Control
 
         private void DataViewer_Remove(object sender, EventArgs e)
         {
-         
+
             var node = treeView1.SelectedNode;
             if (MessageBox.Show(String.Format("Вы действительно хотите удалить '{0}' ?", node.Text), "Подтвердите", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
@@ -128,6 +128,9 @@ namespace ImuravevSoft.Shell.Control
         }
 
 
+        public Dictionary<Guid, BaseData> GuidData {
+            get { return guidData; }
+        }
         public void Init()
         {
             Main.Shell.OpenedTools.ToolChanged += OnToolChanged;
@@ -150,7 +153,7 @@ namespace ImuravevSoft.Shell.Control
                 }
             }
             treeView1.Nodes.AddRange(typeNode.Values.ToArray());
-        
+
 
         }
         public DataViewer()
@@ -198,7 +201,7 @@ namespace ImuravevSoft.Shell.Control
         {
             for (int i = 0; i < range.Length; i++)
             {
-                
+
                 var node = dataNode[range[i]];
                 var guid = (Guid)node.Tag;
                 var data = guidData[guid];

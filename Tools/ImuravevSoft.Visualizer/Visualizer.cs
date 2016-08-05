@@ -46,18 +46,6 @@ namespace ImuravevSoft.Visualizer
             DrawTo();
         }
 
-        public override void LoadTool(BinaryReader reader)
-        {
-            if (reader.ReadBoolean())
-                Graph = Main.Shell.DataManager.DataById(new Guid(reader.ReadString())) as Graph;
-        }
-
-        public override void SaveTool(BinaryWriter writer)
-        {
-            writer.Write(Graph != null);
-            if (Graph != null)
-                writer.Write(Graph.Id.ToString());
-        }
 
         private void DrawTo()
         {
