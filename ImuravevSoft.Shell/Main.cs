@@ -58,28 +58,36 @@ namespace ImuravevSoft.Shell
 
         public void LoadData(string fileName)
         {
-            var loadedData = new List<BaseData>();
-            using (var reader = new BinaryReader(File.OpenRead(fileName)))
+            try
             {
-                int count = reader.ReadInt32();
-                for (int i = 0; i < count; i++)
+                var loadedData = new List<BaseData>();
+                using (var reader = new BinaryReader(File.OpenRead(fileName)))
                 {
-                    var name = reader.ReadString();
-                    var type = Type.GetType(name);
-                    var instance = Activator.CreateInstance(type) as BaseData;
-                    instance.Load(reader);
-                    loadedData.Add(instance);
+                    int count = reader.ReadInt32();
+                    for (int i = 0; i < count; i++)
+                    {
+                        var name = reader.ReadString();
+                        var type = Type.GetType(name);
+                        var instance = Activator.CreateInstance(type) as BaseData;
+                        instance.Load(reader);
+                        loadedData.Add(instance);
+                    }
+                    DataManager.AddData(loadedData.ToArray());
+                    count = reader.ReadInt32();
+                    for (int i = 0; i < count; i++)
+                    {
+                        var name = reader.ReadString();
+                        var type = Type.GetType(name);
+                        var instance = Activator.CreateInstance(type) as BaseTool;
+                        instance.LoadTool(reader, DataManager.GuidData);
+                        OpenedTools.AddTool(instance);
+                    }
                 }
-                DataManager.AddData(loadedData.ToArray());
-                count = reader.ReadInt32();
-                for (int i = 0; i < count; i++)
-                {
-                    var name = reader.ReadString();
-                    var type = Type.GetType(name);
-                    var instance = Activator.CreateInstance(type) as BaseTool;
-                    instance.LoadTool(reader, DataManager.GuidData);
-                    OpenedTools.AddTool(instance);
-                }
+            }
+            catch (Exception ex)
+            {
+                Shell.MessageList.Echo(ex.Message, MsgType.Error);
+                Shell.MessageList.Echo(ex.StackTrace, MsgType.Error);
             }
         }
 
@@ -91,7 +99,6 @@ namespace ImuravevSoft.Shell
                 MessageList.Echo("Данные загружены");
             }
         }
-
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
