@@ -127,7 +127,6 @@ namespace ImuravevSoft.Shell.Control
             Refresh();
         }
 
-
         public Dictionary<Guid, BaseData> GuidData {
             get { return guidData; }
         }
@@ -180,6 +179,7 @@ namespace ImuravevSoft.Shell.Control
         {
             for (int i = 0; i < range.Length; i++)
             {
+                if (guidData.ContainsKey(range[i].Id)) continue;
                 guidData.Add(range[i].Id, range[i]);
                 var rootNode = typeNode[range[i].GetType()];
                 var node = new TreeNode(range[i].Name)
@@ -192,7 +192,6 @@ namespace ImuravevSoft.Shell.Control
             }
             OnToolChanged(null, EventArgs.Empty);
         }
-
         public void RemoveData(BaseData data)
         {
             RemoveData(new[] { data });

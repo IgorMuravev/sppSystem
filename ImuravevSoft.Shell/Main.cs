@@ -47,6 +47,7 @@ namespace ImuravevSoft.Shell
                 }
                 var tools = OpenedTools.OpenedTools;
                 writer.Write(tools.Count);
+                writer.Write(OpenedTools.IndexActiveTool);
                 for (int i = 0; i < tools.Count; i++)
                 {
                     var name = tools[i].GetType().FullName + "," + tools[i].GetType().Assembly.GetName().Name;
@@ -58,45 +59,50 @@ namespace ImuravevSoft.Shell
 
         public void LoadData(string fileName)
         {
-            try
+
+            var loadedData = new List<BaseData>();
+            using (var reader = new BinaryReader(File.OpenRead(fileName)))
             {
-                var loadedData = new List<BaseData>();
-                using (var reader = new BinaryReader(File.OpenRead(fileName)))
+                int count = reader.ReadInt32();
+                for (int i = 0; i < count; i++)
                 {
-                    int count = reader.ReadInt32();
-                    for (int i = 0; i < count; i++)
-                    {
-                        var name = reader.ReadString();
-                        var type = Type.GetType(name);
-                        var instance = Activator.CreateInstance(type) as BaseData;
-                        instance.Load(reader);
-                        loadedData.Add(instance);
-                    }
-                    DataManager.AddData(loadedData.ToArray());
-                    count = reader.ReadInt32();
-                    for (int i = 0; i < count; i++)
-                    {
-                        var name = reader.ReadString();
-                        var type = Type.GetType(name);
-                        var instance = Activator.CreateInstance(type) as BaseTool;
-                        instance.LoadTool(reader, DataManager.GuidData);
-                        OpenedTools.AddTool(instance);
-                    }
+                    var name = reader.ReadString();
+                    var type = Type.GetType(name);
+                    var instance = Activator.CreateInstance(type) as BaseData;
+                    instance.Load(reader);
+                    loadedData.Add(instance);
                 }
+                DataManager.AddData(loadedData.ToArray());
+                count = reader.ReadInt32();
+                int active = reader.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    var name = reader.ReadString();
+                    var type = Type.GetType(name);
+                    var instance = Activator.CreateInstance(type) as BaseTool;
+                    instance.LoadTool(reader, DataManager.GuidData);
+                    OpenedTools.AddTool(instance);
+                }
+                OpenedTools.IndexActiveTool = active;
             }
-            catch (Exception ex)
-            {
-                Shell.MessageList.Echo(ex.Message, MsgType.Error);
-                Shell.MessageList.Echo(ex.StackTrace, MsgType.Error);
-            }
+
         }
 
         private void загрузитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                LoadData(openFileDialog1.FileName);
-                MessageList.Echo("Данные загружены");
+                try
+                {
+                    LoadData(openFileDialog1.FileName);
+                    Text = Path.GetFileName(openFileDialog1.FileName);
+                    MessageList.Echo("Данные загружены");
+                }
+                catch (Exception ex)
+                {
+                    Shell.MessageList.Echo(ex.Message, MsgType.Error);
+                    Shell.MessageList.Echo(ex.StackTrace, MsgType.Error);
+                }
             }
         }
         private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)

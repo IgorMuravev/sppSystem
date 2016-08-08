@@ -48,6 +48,31 @@ namespace ImuravevSoft.Shell.Control
                 else
                     return null;
             }
+            set
+            {
+                if (openedTools.ContainsValue(value))
+                {
+                    foreach (var k in openedTools)
+                    {
+                        if (k.Value == value)
+                        {
+                            tabControl1.SelectedTab = k.Key;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        public int IndexActiveTool
+        {
+            get
+            {
+                return tabControl1.SelectedIndex;
+            }
+            set
+            {
+                tabControl1.SelectedIndex = value;
+            }
         }
         private void tabControl1_MouseDown(object sender, MouseEventArgs e)
         {
