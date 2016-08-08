@@ -2,7 +2,6 @@
 using ImuravevSoft.Core.Tool;
 using ImuravevSoft.Shell;
 using System;
-using ImuravevSoft.Core.Data;
 using System.Linq;
 using ImuravevSoft.GraphData;
 using System.Drawing;
@@ -12,7 +11,6 @@ using System.Windows.Forms;
 namespace ImuravevSoft.GraphGen
 {
     [Tool("Генератор графов", "Позволяет генерировать планарный граф с различным числом вершин")]
-    [ReqData(typeof(Graph))]
     public partial class GraphGenTool : BaseTool
     {
         private PointF Translate(PointF p)

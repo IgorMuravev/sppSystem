@@ -41,6 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\GraphGen.cs" />
+    <Compile Include="Classes\Location.cs" />
+    <Compile Include="GraphGenMenu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GraphGenMenu.Designer.cs">
+      <DependentUpon>GraphGenMenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Visualizer.cs">
       <SubType>UserControl</SubType>
@@ -64,6 +72,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="GraphGenMenu.resx">
+      <DependentUpon>GraphGenMenu.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx" />
     <EmbeddedResource Include="Visualizer.resx">
       <DependentUpon>Visualizer.cs</DependentUpon>

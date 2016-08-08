@@ -15,14 +15,17 @@ namespace ImuravevSoft.Shell
         public Main()
         {
             InitializeComponent();
+
             DataManager = dataViewer1;
             MessageList = messageList1;
-            Tools = toolsPanel1;
+            Tools = ribbon1.Tools;
             OpenedTools = toolTabs1;
+            Ribbon = ribbon1;
             Main.Shell = this;
 
             DataManager.Init();
             Tools.LoadTools();
+            Ribbon.Init();
 
             MessageList.Echo("Программа запущена", MsgType.Info);
         }
@@ -31,6 +34,7 @@ namespace ImuravevSoft.Shell
         public readonly MessageList MessageList;
         public readonly ToolsPanel Tools;
         public readonly ToolTabs OpenedTools;
+        public readonly Ribbon Ribbon;
 
         public void SaveData(string fileName)
         {
@@ -88,7 +92,7 @@ namespace ImuravevSoft.Shell
 
         }
 
-        private void загрузитьToolStripMenuItem_Click(object sender, EventArgs e)
+        public void LoadFile()
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -105,7 +109,7 @@ namespace ImuravevSoft.Shell
                 }
             }
         }
-        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        public void SaveFile()
         {
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -115,13 +119,15 @@ namespace ImuravevSoft.Shell
 
         }
 
-        private void выходToolStripMenuItem_Click(object sender, EventArgs e)
+        public void Exit()
         {
             if (MessageBox.Show("Сохранить изменения перед выходом?", "Сохранение", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                сохранитьToolStripMenuItem_Click(null, EventArgs.Empty);
+                SaveFile();
             }
             Close();
         }
+
+ 
     }
 }

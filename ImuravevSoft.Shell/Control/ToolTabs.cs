@@ -48,20 +48,6 @@ namespace ImuravevSoft.Shell.Control
                 else
                     return null;
             }
-            set
-            {
-                if (openedTools.ContainsValue(value))
-                {
-                    foreach (var k in openedTools)
-                    {
-                        if (k.Value == value)
-                        {
-                            tabControl1.SelectedTab = k.Key;
-                            break;
-                        }
-                    }
-                }
-            }
         }
         public int IndexActiveTool
         {

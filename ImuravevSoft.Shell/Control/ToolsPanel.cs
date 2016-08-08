@@ -32,9 +32,12 @@ namespace ImuravevSoft.Shell.Control
                         var btn = new Button();
                         btn.Text = attr.Name;
                         btn.Height = Height;
+                        btn.Anchor = AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Top;
                         btn.TextAlign = ContentAlignment.BottomCenter;
                         btn.ImageAlign = ContentAlignment.TopCenter;
+                        btn.TextImageRelation = TextImageRelation.Overlay;
                         btn.Left = left;
+                        
                         left += btn.Width;
                         try
                         {
@@ -43,7 +46,7 @@ namespace ImuravevSoft.Shell.Control
                             var icon = r.GetObject("ToolIcon") as Bitmap;
                             if (icon != null)
                             {
-                                btn.Image = ResizeBitmap(icon, 48, 48);
+                                btn.Image = ResizeBitmap(icon, 64, 64);
                             }
                             else
                                 Main.Shell.MessageList.Echo(String.Format("Иконка инструмента '{0}' не найдена", attr.Name), MsgType.Warning);
