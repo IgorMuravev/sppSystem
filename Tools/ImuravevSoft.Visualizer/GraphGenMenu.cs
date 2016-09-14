@@ -16,6 +16,7 @@ namespace ImuravevSoft.Visualizer
     [ToolMenu(typeof(Visualizer))]
     public partial class GraphGenMenu : BaseMenu
     {
+        private Visualizer tool;
         public GraphGenMenu()
         {
             InitializeComponent();
@@ -27,7 +28,7 @@ namespace ImuravevSoft.Visualizer
         {
             get
             {
-                var tool = Main.Shell.OpenedTools.ActiveTool as Visualizer;
+                tool = Main.Shell.OpenedTools.ActiveTool as Visualizer;
                 if (tool == null) return false;
 
                 return true;
@@ -44,6 +45,7 @@ namespace ImuravevSoft.Visualizer
                 var w = Convert.ToInt32(numericUpDown3.Value);
                 var h = Convert.ToInt32(numericUpDown4.Value); 
                 Graph = GraphGen.GetPlanarZoneGraph(new Location() { X = x, Y = y, Width = w, Height = h }, Convert.ToInt32(textBox1.Text), Convert.ToInt32(textBox2.Text));
+                tool.UseData(Graph);
             }
             catch (Exception ex)
             {

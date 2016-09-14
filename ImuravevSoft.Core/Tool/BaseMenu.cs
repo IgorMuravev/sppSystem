@@ -21,7 +21,7 @@ namespace ImuravevSoft.Core.Tool
         {
             get
             {
-                return false;
+                return true;
             }
         }
     }

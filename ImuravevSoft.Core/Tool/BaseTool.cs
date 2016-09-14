@@ -10,6 +10,7 @@ namespace ImuravevSoft.Core.Tool
     public partial class BaseTool : UserControl
     {
         private List<BaseData> usedData = new List<BaseData>();
+        private List<BaseMenu> menus = new List<BaseMenu>();
         public List<BaseData> UsedData
         {
             get
@@ -17,6 +18,11 @@ namespace ImuravevSoft.Core.Tool
                 return usedData;
             }
         }
+        public List<BaseMenu> Menus
+        {
+            get { return menus; }
+        }
+            
 
         public event EventHandler AfterUseData = null;
         public event EventHandler AfterUnuseData = null;

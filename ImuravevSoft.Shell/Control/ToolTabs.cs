@@ -93,7 +93,9 @@ namespace ImuravevSoft.Shell.Control
             if (ToolChanged != null)
                 ToolChanged(null, EventArgs.Empty);
             if (ActiveTool != null)
+            {
                 ActiveTool.ShowInToolTabs();
+            }
         }
         private void tabControl1_ControlAdded(object sender, ControlEventArgs e)
         {
