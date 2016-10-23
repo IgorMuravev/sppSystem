@@ -82,6 +82,7 @@
             this.ribbon1.Name = "ribbon1";
             this.ribbon1.Size = new System.Drawing.Size(1132, 138);
             this.ribbon1.TabIndex = 6;
+            this.ribbon1.Load += new System.EventHandler(this.ribbon1_Load);
             // 
             // Main
             // 

@@ -17,7 +17,6 @@ namespace ImuravevSoft.Core.Data
                 return id;
             }
         }
-        public bool IsSelected { get; set; }
         public BaseData()
         {
             id = Guid.NewGuid();

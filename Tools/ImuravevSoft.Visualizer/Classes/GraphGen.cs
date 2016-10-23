@@ -8,6 +8,10 @@ namespace ImuravevSoft.Visualizer.Classes
     public class GraphGen
     {
 
+        private static List<DelaunayTriangulator.Vertex> Cast(List<Vertex> v)
+        {
+            return v.Select(x => new DelaunayTriangulator.Vertex((float)x.X, (float)x.Y)).ToList();
+        }
         private static double sepFunc(Location loc, double x, int k)
         {
             if (k > 1)
@@ -117,6 +121,8 @@ namespace ImuravevSoft.Visualizer.Classes
 
         public static Graph GetPlanarZoneGraph(Location location, int vertexCount, int zoneCount)
         {
+
+            var triangulator = new DelaunayTriangulator.Triangulator();
             Graph[] g = new Graph[zoneCount];
             List<Edge> edges = new List<Edge>();
             List<Vertex> vertexes = new List<Vertex>();
@@ -126,7 +132,7 @@ namespace ImuravevSoft.Visualizer.Classes
             roots_one[0] = 0;
             roots_one[roots_one.Length - 1] = location.Width;
             for (int i = 1; i < roots_one.Length - 1; i++)
-                roots_one[i] = (2 * location.Width * i - location.Width) / (zoneCount - 1);
+                roots_one[i] =  (2 * location.Width * i - location.Width) / (zoneCount - 1);
 
             for (int i = 0; i < roots_zero.Length - 1; i++)
                 roots_zero[i] = c * i;
@@ -142,11 +148,19 @@ namespace ImuravevSoft.Visualizer.Classes
                     var r = random.NextDouble();
                     var x = prevroot + (nextroot - prevroot) * r;
                     var y = RandomY(x, location.Height, location, zoneCount);
-                    var vertex = new Vertex(new VertexPoint(x, y), "");
+                    var vertex = new Vertex(new VertexPoint(x + location.X, y + location.Y), "");
                     list.Add(vertex);
                 }
                 vertexes.AddRange(list);
-                edges.AddRange(GetrandomEdges(list, 0.2 * location.Width, 0.6 * location.Width));
+                var triangles = triangulator.Triangulation(Cast(list));
+                foreach(var t in triangles)
+                {
+                    edges.Add(new Edge(list[t.a], list[t.b]));
+                    edges.Add(new Edge(list[t.b], list[t.c]));
+                    edges.Add(new Edge(list[t.a], list[t.c]));
+                }
+ 
+    
             }
 
             for (int i = 0; i < roots_zero.Length - 1; i++)
@@ -159,16 +173,37 @@ namespace ImuravevSoft.Visualizer.Classes
                     var r = random.NextDouble();
                     var x = prevroot + (nextroot - prevroot) * r;
                     var y = RandomY(x, 0, location, zoneCount);
-                    var vertex = new Vertex(new VertexPoint(x, y), "");
+                    var vertex = new Vertex(new VertexPoint(x + location.X, y + location.Y), "");
                     list.Add(vertex);
                 }
                 vertexes.AddRange(list);
-                edges.AddRange(GetrandomEdges(list, 0.2 * location.Width, 0.6 * location.Width));
-            }
 
+                var triangles = triangulator.Triangulation(Cast(list));
+                foreach (var t in triangles)
+                {
+                    edges.Add(new Edge(list[t.a], list[t.b]));
+                    edges.Add(new Edge(list[t.b], list[t.c]));
+                    edges.Add(new Edge(list[t.a], list[t.c]));
+                }
+              
+            }
+          //  edges = edges.Distinct(new EdgeComparer()).ToList();
             return new Graph(vertexes, edges);
         }
 
+
+        internal class EdgeComparer : IEqualityComparer<Edge>
+        {
+            bool IEqualityComparer<Edge>.Equals(Edge x, Edge y)
+            {
+                return x.GetHashCode() == y.GetHashCode();
+            }
+
+            int IEqualityComparer<Edge>.GetHashCode(Edge obj)
+            {
+                return obj.V1.GetHashCode() + obj.V2.GetHashCode();
+            }
+        }
 
         public static Graph GetRandomZoneGraph(Location location, int vertexCount, int zoneCount)
         {

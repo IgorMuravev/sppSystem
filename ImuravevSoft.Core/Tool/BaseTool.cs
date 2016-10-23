@@ -22,12 +22,12 @@ namespace ImuravevSoft.Core.Tool
         {
             get { return menus; }
         }
-            
 
-        public event EventHandler AfterUseData = null;
-        public event EventHandler AfterUnuseData = null;
-        public event EventHandler BeforeUseData = null;
-        public event EventHandler BeforeUnuseData = null;
+
+        public event EventHandler<AfterUseDataArgs> AfterUseData = null;
+        public event EventHandler<AfterUnuseDataArgs> AfterUnuseData = null;
+        public event EventHandler<BeforeUseDataArgs> BeforeUseData = null;
+        public event EventHandler<BeforeUnuseDataArgs> BeforeUnuseData = null;
 
         public virtual void ShowInToolTabs()
         { }
@@ -38,19 +38,21 @@ namespace ImuravevSoft.Core.Tool
         }
         public virtual void UnuseData(BaseData[] datas)
         {
-            if (BeforeUnuseData != null)
-                BeforeUnuseData(null, EventArgs.Empty);
+
 
             var used = new List<BaseData>();
             foreach (var data in UsedData)
             {
+                if (BeforeUnuseData != null)
+                    BeforeUnuseData(this, new BeforeUnuseDataArgs(data));
                 if (!datas.Contains(data))
                     used.Add(data);
+
+                if (AfterUnuseData != null)
+                    AfterUnuseData(null, new AfterUnuseDataArgs(data));
             }
             usedData = used;
 
-            if (AfterUnuseData != null)
-                AfterUnuseData(null, EventArgs.Empty);
         }
         public virtual void UseData(BaseData data)
         {
@@ -58,14 +60,17 @@ namespace ImuravevSoft.Core.Tool
         }
         public virtual void UseData(BaseData[] datas)
         {
-            if (BeforeUseData != null)
-                BeforeUseData(null, EventArgs.Empty);
 
-            UsedData.AddRange(datas);
-
-            if (AfterUseData != null)
-                AfterUseData(null, EventArgs.Empty);
+            foreach (var data in datas)
+            {
+                if (BeforeUseData != null)
+                    BeforeUseData(null, new BeforeUseDataArgs(data));
+                UsedData.Add(data);
+                if (AfterUseData != null)
+                    AfterUseData(null, new AfterUseDataArgs(data));
+            }
         }
+
 
 
         // TO-DO
@@ -76,7 +81,7 @@ namespace ImuravevSoft.Core.Tool
             for (int i = 0; i < count; i++)
             {
                 var data = d[(new Guid(reader.ReadString()))];
-                dataInUse[i]= data;
+                dataInUse[i] = data;
             }
             UseData(dataInUse);
         }
@@ -90,5 +95,32 @@ namespace ImuravevSoft.Core.Tool
             }
         }
 
+    }
+
+    public abstract class BaseDataArgs : EventArgs
+    {
+        public readonly BaseData Data;
+
+        public BaseDataArgs(BaseData d)
+        {
+            Data = d;
+        }
+    }
+
+    public class AfterUseDataArgs : BaseDataArgs
+    {
+        public AfterUseDataArgs(BaseData d) : base(d) { }
+    }
+    public class AfterUnuseDataArgs : BaseDataArgs
+    {
+        public AfterUnuseDataArgs(BaseData d) : base(d) { }
+    }
+    public class BeforeUseDataArgs : BaseDataArgs
+    {
+        public BeforeUseDataArgs(BaseData d) : base(d) { }
+    }
+    public class BeforeUnuseDataArgs : BaseDataArgs
+    {
+        public BeforeUnuseDataArgs(BaseData d) : base(d) { }
     }
 }

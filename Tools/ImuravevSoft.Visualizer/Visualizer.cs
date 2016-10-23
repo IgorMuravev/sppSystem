@@ -7,38 +7,30 @@ using System.Drawing;
 using System.Linq;
 using System.IO;
 using ImuravevSoft.Shell;
+using ImuravevSoft.Core.Data;
 
 namespace ImuravevSoft.Visualizer
 {
     [Tool("Визуализатор графов", "Позволяет отображать графы на плоскости")]
-    [ReqData(typeof(Graph))]
+    [ReqData(typeof(IDrawable))]
     public partial class Visualizer : BaseTool
     {
         private bool canMoving = false;
         private float dx = 0;
         private float dy = 0;
         private Point prevPoint;
+        private RectangleF worldRect;
 
-        public Graph Graph { get; private set; }
         public float ZoomScale { get; private set; }
-        private void AUsedData(object sender, EventArgs e)
+        private void AUsedData(object sender, AfterUseDataArgs e)
         {
-            Graph = UsedData.OfType<Graph>().FirstOrDefault();
-            dx = 0;
-            dy = 0;
-            ZoomScale = 1;
+            var border = (e.Data as IDrawable).GetBorder();
+            var newx = border.X < worldRect.X ? border.X : worldRect.X;
+            var newy = border.Y < worldRect.Y ? border.Y : worldRect.Y;
+            var newwidth = border.Right > worldRect.Right ? border.Right : worldRect.Right;
+            var newheigth = border.Bottom > worldRect.Bottom ? border.Bottom : worldRect.Bottom;
+            worldRect = new RectangleF(newx, newy, newwidth - newx, newheigth - newy);
             DrawTo();
-        }
-        private void BUsedData(object sender, EventArgs e)
-        {
-            var g = UsedData.OfType<Graph>().ToArray();
-            UnuseData(g);
-        }
-
-        private void AUnusedData(object sender, EventArgs e)
-        {
-            if (Graph != null && !UsedData.Contains(Graph))
-                Graph = null;
         }
 
         public override void ShowInToolTabs()
@@ -46,42 +38,26 @@ namespace ImuravevSoft.Visualizer
             DrawTo();
         }
 
- 
-
         private void DrawTo()
         {
-            if (Graph != null)
+            var bmp = new Bitmap(Width, Height);
+            float kx = ZoomScale * Width / worldRect.Width;
+            float ky = ZoomScale * Height / worldRect.Height;
+            var f = new Func<PointF, PointF>(p =>
             {
-                var bmp = new Bitmap(Width, Height);
-                float kx = ZoomScale * Width / Graph.Border.Width;
-                float ky = ZoomScale * Height / Graph.Border.Height;
-
-                var f = new Func<VertexPoint, VertexPoint>(p =>
+                return new PointF(kx * (p.X - worldRect.X) + dx, Height - ky * (p.Y - worldRect.Y) + dy);
+            });
+            using (var g = Graphics.FromImage(bmp))
+            {
+                foreach (var d in UsedData)
                 {
-                    return new VertexPoint(kx * (p.X - Graph.Border.X) + dx, Height - ky * (p.Y - Graph.Border.Y) + dy);
-                });
 
-                var points = new Dictionary<Vertex, VertexPoint>();
-                using (var g = Graphics.FromImage(bmp))
-                {
-                    foreach (var v in Graph.Vertexes)
-                    {
-                        var p = f(v);
-                        points.Add(v, p);
-                        g.FillEllipse(Brushes.Blue, (float)p.X - 3f, (float)p.Y - 3f, 6f, 6f);
-                    }
-
-                    foreach (var e in Graph.Edges)
-                    {
-                        var p1 = points[e.V1];
-                        var p2 = points[e.V2];
-                        g.DrawLine(Pens.Black, (float)p1.X, (float)p1.Y, (float)p2.X, (float)p2.Y);
-                    }
-
+                    var draw = d as IDrawable;
+                    if (draw != null)
+                        draw.Draw(g, f);
                 }
-                pictureBox1.Image = bmp;
-
             }
+            pictureBox1.Image = bmp;
         }
         public Visualizer()
         {
@@ -91,9 +67,13 @@ namespace ImuravevSoft.Visualizer
             ZoomScale = 1;
             pictureBox1.MouseWheel += Visualizer_MouseWheel;
             AfterUseData += AUsedData;
-            BeforeUseData += BUsedData;
-            AfterUnuseData += AUnusedData;
+            AfterUnuseData += Visualizer_AfterUnuseData;
 
+        }
+
+        private void Visualizer_AfterUnuseData(object sender, AfterUnuseDataArgs e)
+        {
+            DrawTo();
         }
 
         private void Visualizer_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)

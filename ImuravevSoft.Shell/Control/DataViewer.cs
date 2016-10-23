@@ -41,9 +41,24 @@ namespace ImuravevSoft.Shell.Control
             var reqData = tool.GetType().GetCustomAttributes(typeof(ReqDataAttribute), false) as ReqDataAttribute[];
             foreach (var req in reqData)
             {
-                var rootType = typeNode[req.Data];
-                foreach (TreeNode child in rootType.Nodes)
-                    usedData.Add(guidData[(Guid)child.Tag]);
+                if (req.Data.IsInterface)
+                {
+                    foreach (var tn in typeNode)
+                    {
+                        if (tn.Key.GetInterfaces().Any(x => x == req.Data))
+                        {
+                            var rootType = tn.Value;
+                            foreach (TreeNode child in rootType.Nodes)
+                                usedData.Add(guidData[(Guid)child.Tag]);
+                        }
+                    }
+                }
+                else
+                {
+                    var rootType = typeNode[req.Data];
+                    foreach (TreeNode child in rootType.Nodes)
+                        usedData.Add(guidData[(Guid)child.Tag]);
+                }
             }
             treeView1.Invalidate();
         }

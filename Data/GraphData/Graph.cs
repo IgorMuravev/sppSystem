@@ -9,7 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace ImuravevSoft.GraphData
 {
     [DataTree("Графы")]
-    public class Graph : BaseData
+    public class Graph : BaseData,IDrawable
     {
         [Serializable]
         internal class GraphStruct
@@ -30,9 +30,9 @@ namespace ImuravevSoft.GraphData
                 if (v.Y > ymax) ymax = v.Y;
                 if (v.Y < ymin) ymin = v.Y;
             }
-            Border = new Rectangle((int)xmin, (int)ymin, (int)(xmax - xmin), (int)(ymax - ymin));
+            Border = new RectangleF((float)xmin, (float)ymin, (float)(xmax - xmin), (float)(ymax - ymin));
         }
-        public Rectangle Border { get; private set; }
+        public RectangleF Border { get; private set; }
         public List<Vertex> Vertexes { get; private set; }
         public List<Edge> Edges { get; private set; }
         public int VertexCount { get { return Vertexes.Count; } }
@@ -64,6 +64,29 @@ namespace ImuravevSoft.GraphData
             base.Save(writer);
             BinaryFormatter serializer = new BinaryFormatter();
             serializer.Serialize(writer.BaseStream, new GraphStruct() { Vertexes = this.Vertexes, Edges = this.Edges });
+        }
+
+        void IDrawable.Draw(Graphics g, Func<PointF, PointF> transform)
+        {
+            var points = new Dictionary<Vertex, PointF>();
+            foreach (var v in Vertexes)
+            {
+                var p = transform(new PointF((float)v.X, (float)v.Y));
+                points.Add(v, p);
+                g.FillEllipse(Brushes.Blue, p.X - 3f, p.Y - 3f, 6f, 6f);
+            }
+
+            foreach (var e in Edges)
+            {
+                var p1 = points[e.V1];
+                var p2 = points[e.V2];
+                g.DrawLine(Pens.Black, p1.X, p1.Y, p2.X, p2.Y);
+            }
+        }
+
+        RectangleF IDrawable.GetBorder()
+        {
+            return Border;
         }
     }
 

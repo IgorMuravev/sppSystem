@@ -128,6 +128,9 @@ namespace ImuravevSoft.Shell
             Close();
         }
 
- 
+        private void ribbon1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -23,7 +23,6 @@ namespace ImuravevSoft.Visualizer
             Graph = null;
             Title = "Генерация графа";
         }
-
         public override bool IsVisible
         {
             get
@@ -34,7 +33,6 @@ namespace ImuravevSoft.Visualizer
                 return true;
             }
         }
-
         private GraphData.Graph Graph;
         private void button1_Click(object sender, EventArgs e)
         {
@@ -52,7 +50,6 @@ namespace ImuravevSoft.Visualizer
                 Main.Shell.MessageList.Echo(ex.ToString(), Shell.Control.MsgType.Error);
             }
         }
-
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (Graph == null) return;

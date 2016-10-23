@@ -43,6 +43,11 @@
   <ItemGroup>
     <Compile Include="Classes\GraphGen.cs" />
     <Compile Include="Classes\Location.cs" />
+    <Compile Include="Classes\Triangulator\Hull.cs" />
+    <Compile Include="Classes\Triangulator\Set.cs" />
+    <Compile Include="Classes\Triangulator\Triad.cs" />
+    <Compile Include="Classes\Triangulator\Triangulator.cs" />
+    <Compile Include="Classes\Triangulator\Vertex.cs" />
     <Compile Include="GraphGenMenu.cs">
       <SubType>UserControl</SubType>
     </Compile>
