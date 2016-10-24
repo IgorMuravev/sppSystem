@@ -54,7 +54,6 @@ namespace ImuravevSoft.Shell.Control
         {
             InitializeComponent();
         }
-
         public void Init()
         {
             typesMenu.Clear();
@@ -89,7 +88,6 @@ namespace ImuravevSoft.Shell.Control
             }
             Main.Shell.OpenedTools.ToolChanged += OnToolChanged;
         }
-
         private void button1_Click(object sender, EventArgs e)
         {
             Main.Shell.LoadFile();

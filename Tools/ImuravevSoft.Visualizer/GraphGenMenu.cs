@@ -28,9 +28,7 @@ namespace ImuravevSoft.Visualizer
             get
             {
                 tool = Main.Shell.OpenedTools.ActiveTool as Visualizer;
-                if (tool == null) return false;
-
-                return true;
+                return (tool != null);
             }
         }
         private GraphData.Graph Graph;
@@ -38,6 +36,8 @@ namespace ImuravevSoft.Visualizer
         {
             try
             {
+                if (Graph != null)
+                    tool.UnuseData(Graph);
                 var x = Convert.ToInt32(numericUpDown1.Value);
                 var y = Convert.ToInt32(numericUpDown2.Value);
                 var w = Convert.ToInt32(numericUpDown3.Value);

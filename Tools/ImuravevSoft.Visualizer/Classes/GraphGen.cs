@@ -22,9 +22,9 @@ namespace ImuravevSoft.Visualizer.Classes
                 return -1;
         }
         private static readonly Random random = new Random();
-        private static double RandomY(double x, double nextBorder, Location loc, int k)
+        private static double RandomY(double x, double nextBorder, Location loc, int k, double dy)
         {
-            var r = random.NextDouble();
+            var r = GetNormRandom();
             var border = sepFunc(loc, x, k);
             if (border > nextBorder)
             {
@@ -32,7 +32,7 @@ namespace ImuravevSoft.Visualizer.Classes
                 border = nextBorder;
                 nextBorder = buf;
             }
-            return border + (nextBorder - border) * r;
+            return border + (nextBorder - border - dy) * r;
 
         }
         public static List<Vertex> GetRandomVertexes(Location location, int vertexCount)
@@ -71,12 +71,84 @@ namespace ImuravevSoft.Visualizer.Classes
 
         }
 
+        private static double GetNormRandom()
+        {
+            var sum = 0.0;
+            for (int i = 0; i < 8; i++)
+                sum += random.NextDouble();
+            return sum / 8;
+        }
         public static Graph GetRandomGraph(Location location, int vertexCount)
         {
             var vertex = GetRandomVertexes(location, vertexCount);
             return new Graph(vertex, GetrandomEdges(vertex, 0.02 * location.Width, 0.3 * location.Width));
         }
 
+        private static VertexPoint[] GetPoints(Location loc, int k, int count = 100)
+        {
+            double h = loc.Width / count;
+            var array = new VertexPoint[count];
+            for (int i = 0; i < count; i++)
+            {
+                var y = sepFunc(loc, loc.X + h * i, k);
+                array[i] = new VertexPoint(loc.X + h * i, y);
+            }
+            return array;
+        }
+
+        private static double DistanceToRoots(VertexPoint v, VertexPoint[] roots, out int root)
+        {
+            double min = Double.PositiveInfinity;
+            root = -1;
+            for (int i = 0; i < roots.Length; i++)
+            {
+                var distance = v.Distance(roots[i]);
+                if (distance < min)
+                {
+                    min = distance;
+                    root = i;
+                }
+            }
+            return min;
+        }
+
+
+        private static List<int> Mins(List<Vertex> vertexes, VertexPoint[] roots, int mins)
+        {
+            var res = new List<int>();
+            var min = new List<double>();
+            for (int i = 0; i < mins; i++)
+            {
+                res.Add(-1);
+                min.Add(double.PositiveInfinity);
+            }
+
+            for (int k = 0; k < vertexes.Count; k++)
+            {
+                var v = vertexes[k];
+                int u = 0;
+                double val = DistanceToRoots(v, roots, out u);
+
+                for (int i = 0; i < min.Count; i++)
+                {
+                    if (val < min[i])
+                    {
+                        for (int j = min.Count - 1; j > i; j--)
+                        {
+                            min[j] = min[j - 1];
+                            res[j] = res[j - 1];
+
+                        }
+                        min[i] = val;
+                        res[i] = k;
+                        break;
+                    }
+
+                }
+            }
+            return res;
+
+        }
         private static double Rotate(Vertex a, Vertex b, Vertex c)
         {
             return (b.X - a.X) * (c.Y - b.Y) - (b.Y - a.Y) * (c.X - b.X);
@@ -132,12 +204,14 @@ namespace ImuravevSoft.Visualizer.Classes
             roots_one[0] = 0;
             roots_one[roots_one.Length - 1] = location.Width;
             for (int i = 1; i < roots_one.Length - 1; i++)
-                roots_one[i] =  (2 * location.Width * i - location.Width) / (zoneCount - 1);
+                roots_one[i] = (2 * location.Width * i - location.Width) / (zoneCount - 1);
 
             for (int i = 0; i < roots_zero.Length - 1; i++)
                 roots_zero[i] = c * i;
             roots_zero[roots_zero.Length - 1] = location.Width;
 
+            var roots = GetPoints(location, zoneCount);
+            var addedRoots = new Dictionary<VertexPoint, Vertex>();
             for (int i = 0; i < roots_one.Length - 1; i++)
             {
                 double prevroot = roots_one[i];
@@ -145,39 +219,26 @@ namespace ImuravevSoft.Visualizer.Classes
                 var list = new List<Vertex>();
                 for (int j = 0; j < vertexCount; j++)
                 {
-                    var r = random.NextDouble();
+                    var r = GetNormRandom();
                     var x = prevroot + (nextroot - prevroot) * r;
-                    var y = RandomY(x, location.Height, location, zoneCount);
+                    var y = RandomY(x, location.Height, location, zoneCount, 0.05 * location.Height);
                     var vertex = new Vertex(new VertexPoint(x + location.X, y + location.Y), "");
                     list.Add(vertex);
                 }
-                vertexes.AddRange(list);
-                var triangles = triangulator.Triangulation(Cast(list));
-                foreach(var t in triangles)
+                var mins = Mins(list, roots, 2);
+                for (int k = 0; k < mins.Count; k++)
                 {
-                    edges.Add(new Edge(list[t.a], list[t.b]));
-                    edges.Add(new Edge(list[t.b], list[t.c]));
-                    edges.Add(new Edge(list[t.a], list[t.c]));
-                }
- 
-    
-            }
+                    int d;
+                    DistanceToRoots(list[mins[k]], roots, out d);
+                    Vertex v = null;
+                    if (!addedRoots.ContainsKey(roots[d]))
+                        addedRoots.Add(roots[d], new Vertex(roots[d], ""));
 
-            for (int i = 0; i < roots_zero.Length - 1; i++)
-            {
-                double prevroot = roots_zero[i];
-                double nextroot = roots_zero[i + 1];
-                var list = new List<Vertex>();
-                for (int j = 0; j < vertexCount; j++)
-                {
-                    var r = random.NextDouble();
-                    var x = prevroot + (nextroot - prevroot) * r;
-                    var y = RandomY(x, 0, location, zoneCount);
-                    var vertex = new Vertex(new VertexPoint(x + location.X, y + location.Y), "");
-                    list.Add(vertex);
+                    v = addedRoots[roots[d]];
+
+                    edges.Add(new Edge(list[mins[k]], v));
                 }
                 vertexes.AddRange(list);
-
                 var triangles = triangulator.Triangulation(Cast(list));
                 foreach (var t in triangles)
                 {
@@ -185,9 +246,48 @@ namespace ImuravevSoft.Visualizer.Classes
                     edges.Add(new Edge(list[t.b], list[t.c]));
                     edges.Add(new Edge(list[t.a], list[t.c]));
                 }
-              
+
+
             }
-          //  edges = edges.Distinct(new EdgeComparer()).ToList();
+            for (int i = 0; i < roots_zero.Length - 1; i++)
+            {
+                double prevroot = roots_zero[i];
+                double nextroot = roots_zero[i + 1];
+                var list = new List<Vertex>();
+                for (int j = 0; j < vertexCount; j++)
+                {
+                    var r = GetNormRandom();
+                    var x = prevroot + (nextroot - prevroot) * r;
+                    var y = RandomY(x, 0, location, zoneCount, 0.05 * location.Height);
+                    var vertex = new Vertex(new VertexPoint(x + location.X, y + location.Y), "");
+                    list.Add(vertex);
+                }
+
+                var mins = Mins(list, roots, 2);
+                for (int k = 0; k < mins.Count; k++)
+                {
+                    int d;
+                    DistanceToRoots(list[mins[k]], roots, out d);
+                    Vertex v = null;
+                    if (!addedRoots.ContainsKey(roots[d]))
+                        addedRoots.Add(roots[d], new Vertex(roots[d], ""));
+
+                    v = addedRoots[roots[d]];
+
+                    edges.Add(new Edge(list[mins[k]], v));
+                }
+                vertexes.AddRange(list);
+                var triangles = triangulator.Triangulation(Cast(list));
+                foreach (var t in triangles)
+                {
+                    edges.Add(new Edge(list[t.a], list[t.b]));
+                    edges.Add(new Edge(list[t.b], list[t.c]));
+                    edges.Add(new Edge(list[t.a], list[t.c]));
+                }
+
+            }
+            vertexes.AddRange(addedRoots.Values);
+            edges = edges.Distinct(new EdgeComparer()).ToList();
             return new Graph(vertexes, edges);
         }
 
@@ -205,6 +305,13 @@ namespace ImuravevSoft.Visualizer.Classes
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="vertexCount"></param>
+        /// <param name="zoneCount"></param>
+        /// <returns></returns>
         public static Graph GetRandomZoneGraph(Location location, int vertexCount, int zoneCount)
         {
             Graph[] g = new Graph[zoneCount];
