@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{79CA0DBB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.Visualizer", "Tools\ImuravevSoft.Visualizer\ImuravevSoft.Visualizer.csproj", "{72374048-3DD8-47CD-B1E0-3F3E149D5298}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.FejerTool", "Tools\ImuravevSoft.FejerTool\ImuravevSoft.FejerTool.csproj", "{671B9481-79CB-4742-A41F-0ED3EDE62F5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{72374048-3DD8-47CD-B1E0-3F3E149D5298}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72374048-3DD8-47CD-B1E0-3F3E149D5298}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72374048-3DD8-47CD-B1E0-3F3E149D5298}.Release|Any CPU.Build.0 = Release|Any CPU
+		{671B9481-79CB-4742-A41F-0ED3EDE62F5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{671B9481-79CB-4742-A41F-0ED3EDE62F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{671B9481-79CB-4742-A41F-0ED3EDE62F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{671B9481-79CB-4742-A41F-0ED3EDE62F5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -44,5 +50,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F} = {D67E8D8D-1802-441E-9D8B-88EF3139468C}
 		{72374048-3DD8-47CD-B1E0-3F3E149D5298} = {79CA0DBB-768C-4AD6-84B2-AACDFB1BEE01}
+		{671B9481-79CB-4742-A41F-0ED3EDE62F5A} = {79CA0DBB-768C-4AD6-84B2-AACDFB1BEE01}
 	EndGlobalSection
 EndGlobal

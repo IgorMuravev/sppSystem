@@ -59,5 +59,19 @@ namespace ImuravevSoft.Visualizer
                 Main.Shell.DataManager.AddData(Graph);
             }
         }
+
+        private void btnExport_Click(object sender, EventArgs e)
+        {
+            if (Graph == null)
+            {
+                Main.Shell.MessageList.Echo("Нечего экспортировать", Shell.Control.MsgType.Warning);
+                return;
+            }
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                Graph.Export(saveFileDialog1.FileName);
+            }
+        }
     }
 }

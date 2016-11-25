@@ -8,6 +8,7 @@ namespace ImuravevSoft.GraphData
     [Serializable]
     public class Edge
     {
+        public List<string> Markers { get; private set; }
         public Vertex V1 { get; set; }
         public Vertex V2 { get; set; }
         public double Weight { get; set; }
@@ -16,6 +17,7 @@ namespace ImuravevSoft.GraphData
             V1 = v1;
             V2 = v2;
             Weight = W;
+            Markers = new List<string>();
         }
     }
 }

@@ -43,6 +43,7 @@ namespace ImuravevSoft.Visualizer
             var bmp = new Bitmap(Width, Height);
             float kx = ZoomScale * Width / worldRect.Width;
             float ky = ZoomScale * Height / worldRect.Height;
+            
             var f = new Func<PointF, PointF>(p =>
             {
                 return new PointF(kx * (p.X - worldRect.X) + dx, Height - ky * (p.Y - worldRect.Y) + dy);

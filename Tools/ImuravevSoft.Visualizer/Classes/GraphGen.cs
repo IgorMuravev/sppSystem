@@ -212,6 +212,7 @@ namespace ImuravevSoft.Visualizer.Classes
 
             var roots = GetPoints(location, zoneCount);
             var addedRoots = new Dictionary<VertexPoint, Vertex>();
+            int number = 0;
             for (int i = 0; i < roots_one.Length - 1; i++)
             {
                 double prevroot = roots_one[i];
@@ -222,29 +223,30 @@ namespace ImuravevSoft.Visualizer.Classes
                     var r = GetNormRandom();
                     var x = prevroot + (nextroot - prevroot) * r;
                     var y = RandomY(x, location.Height, location, zoneCount, 0.05 * location.Height);
-                    var vertex = new Vertex(new VertexPoint(x + location.X, y + location.Y), "");
+                    var vertex = new Vertex(new VertexPoint(x + location.X, y + location.Y), number.ToString());
+                    number++;
                     list.Add(vertex);
                 }
-                var mins = Mins(list, roots, 2);
-                for (int k = 0; k < mins.Count; k++)
-                {
-                    int d;
-                    DistanceToRoots(list[mins[k]], roots, out d);
-                    Vertex v = null;
-                    if (!addedRoots.ContainsKey(roots[d]))
-                        addedRoots.Add(roots[d], new Vertex(roots[d], ""));
+                //var mins = Mins(list, roots, 2);
+                //for (int k = 0; k < mins.Count; k++)
+                //{
+                //    int d;
+                //    DistanceToRoots(list[mins[k]], roots, out d);
+                //    Vertex v = null;
+                //    if (!addedRoots.ContainsKey(roots[d]))
+                //        addedRoots.Add(roots[d], new Vertex(roots[d], ""));
 
-                    v = addedRoots[roots[d]];
+                //    v = addedRoots[roots[d]];
 
-                    edges.Add(new Edge(list[mins[k]], v));
-                }
+                //    edges.Add(new Edge(list[mins[k]], v));
+                //}
                 vertexes.AddRange(list);
                 var triangles = triangulator.Triangulation(Cast(list));
                 foreach (var t in triangles)
                 {
-                    edges.Add(new Edge(list[t.a], list[t.b]));
-                    edges.Add(new Edge(list[t.b], list[t.c]));
-                    edges.Add(new Edge(list[t.a], list[t.c]));
+                    edges.Add(new Edge(list[t.a], list[t.b], VertexPoint.Distance(list[t.a], list[t.b])));
+                    edges.Add(new Edge(list[t.b], list[t.c], VertexPoint.Distance(list[t.b], list[t.c])));
+                    edges.Add(new Edge(list[t.a], list[t.c], VertexPoint.Distance(list[t.a], list[t.c])));
                 }
 
 
@@ -259,34 +261,35 @@ namespace ImuravevSoft.Visualizer.Classes
                     var r = GetNormRandom();
                     var x = prevroot + (nextroot - prevroot) * r;
                     var y = RandomY(x, 0, location, zoneCount, 0.05 * location.Height);
-                    var vertex = new Vertex(new VertexPoint(x + location.X, y + location.Y), "");
+                    var vertex = new Vertex(new VertexPoint(x + location.X, y + location.Y), number.ToString());
+                    number++;
                     list.Add(vertex);
                 }
 
-                var mins = Mins(list, roots, 2);
-                for (int k = 0; k < mins.Count; k++)
-                {
-                    int d;
-                    DistanceToRoots(list[mins[k]], roots, out d);
-                    Vertex v = null;
-                    if (!addedRoots.ContainsKey(roots[d]))
-                        addedRoots.Add(roots[d], new Vertex(roots[d], ""));
+                //var mins = Mins(list, roots, 2);
+                //for (int k = 0; k < mins.Count; k++)
+                //{
+                //    int d;
+                //    DistanceToRoots(list[mins[k]], roots, out d);
+                //    Vertex v = null;
+                //    if (!addedRoots.ContainsKey(roots[d]))
+                //        addedRoots.Add(roots[d], new Vertex(roots[d], ""));
 
-                    v = addedRoots[roots[d]];
+                //    v = addedRoots[roots[d]];
 
-                    edges.Add(new Edge(list[mins[k]], v));
-                }
+                //    edges.Add(new Edge(list[mins[k]], v));
+                //}
                 vertexes.AddRange(list);
                 var triangles = triangulator.Triangulation(Cast(list));
                 foreach (var t in triangles)
                 {
-                    edges.Add(new Edge(list[t.a], list[t.b]));
-                    edges.Add(new Edge(list[t.b], list[t.c]));
-                    edges.Add(new Edge(list[t.a], list[t.c]));
+                    edges.Add(new Edge(list[t.a], list[t.b], VertexPoint.Distance(list[t.a], list[t.b])));
+                    edges.Add(new Edge(list[t.b], list[t.c], VertexPoint.Distance(list[t.b], list[t.c])));
+                    edges.Add(new Edge(list[t.a], list[t.c], VertexPoint.Distance(list[t.a], list[t.c])));
                 }
 
             }
-            vertexes.AddRange(addedRoots.Values);
+           // vertexes.AddRange(addedRoots.Values);
             edges = edges.Distinct(new EdgeComparer()).ToList();
             return new Graph(vertexes, edges);
         }
