@@ -73,12 +73,47 @@ namespace ImuravevSoft.Shell.Control
                     var contextMenu = new ContextMenuStrip();
                     contextMenu.Items.Add("Переименовать");
                     contextMenu.Items.Add("Удалить");
+      
+                    contextMenu.Items.Add("Экспорт");
                     contextMenu.Items[0].Click += DataViewer_Click;
                     contextMenu.Items[1].Click += DataViewer_Remove;
+                    contextMenu.Items[2].Click += DataViewer_Export;
+                    contextMenu.Show(treeView1, new Point(e.X, e.Y));
+                    treeView1.SelectedNode = node;
+                }
+                else
+                {
+                    treeView1.SelectedNode = node;
+                    var contextMenu = new ContextMenuStrip();
+                    contextMenu.Items.Add("Импорт");
+                    contextMenu.Items[0].Click += DataViewer_Import;
                     contextMenu.Show(treeView1, new Point(e.X, e.Y));
                     treeView1.SelectedNode = node;
                 }
             }
+        }
+
+        private void DataViewer_Export(object sender, EventArgs e)
+        {
+            var node = treeView1.SelectedNode;
+            var data = guidData[(Guid)node.Tag];
+            data.Export();
+        }
+
+        private void DataViewer_Import(object sender, EventArgs e)
+        {
+            var node = treeView1.SelectedNode;
+            if (typeNode.ContainsValue(node))
+            {
+                var obj = Activator.CreateInstance(node.Tag as Type) as BaseData;
+                if (obj.Import())
+                {
+                    AddData(obj);
+                }
+
+            }
+
+
         }
 
         private void DataViewer_Remove(object sender, EventArgs e)
@@ -161,7 +196,7 @@ namespace ImuravevSoft.Shell.Control
                     var attr = t.GetCustomAttributes(typeof(DataTreeAttribute), false).FirstOrDefault() as DataTreeAttribute;
                     if (t != default(object))
                     {
-                        var node = new TreeNode(attr.Name);
+                        var node = new TreeNode(attr.Name) { Tag = t };
                         typeNode.Add(t, node);
                     }
                 }
@@ -228,6 +263,14 @@ namespace ImuravevSoft.Shell.Control
                 node.Remove();
             }
             OnToolChanged(null, EventArgs.Empty);
+        }
+
+        private void treeView1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                
+            }
         }
     }
 }

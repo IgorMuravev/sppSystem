@@ -91,5 +91,24 @@ namespace ImuravevSoft.Visualizer
                 }
             }
         }
+
+        private void btnClearAll_Click(object sender, EventArgs e)
+        {
+            foreach (Graph g in tool.UsedData.Where(x => x is Graph))
+            {
+
+                g.Markers.Clear();
+
+                foreach (var v in g.Vertexes)
+                {
+                    v.Markers.Clear();
+                }
+
+                foreach (var ed in g.Edges)
+                {
+                    ed.Markers.Clear();
+                }
+            }
+        }
     }
 }

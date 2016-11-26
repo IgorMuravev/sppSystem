@@ -32,5 +32,13 @@ namespace ImuravevSoft.Core.Data
             Name = reader.ReadString();
             id = new Guid(reader.ReadString());
         }
+
+        public virtual void Export()
+        { }
+
+        public virtual bool Import()
+        {
+            return false;
+        }
     }
 }

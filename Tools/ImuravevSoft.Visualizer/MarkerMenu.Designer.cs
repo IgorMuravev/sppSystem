@@ -128,6 +128,7 @@
             this.btnClearAll.TabIndex = 9;
             this.btnClearAll.Text = "Очистить все";
             this.btnClearAll.UseVisualStyleBackColor = true;
+            this.btnClearAll.Click += new System.EventHandler(this.btnClearAll_Click);
             // 
             // MarkerMenu
             // 

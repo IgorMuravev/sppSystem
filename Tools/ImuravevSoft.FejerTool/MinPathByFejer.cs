@@ -12,13 +12,88 @@ using ImuravevSoft.Core.Attributes;
 using fLib;
 using System.IO;
 using System.Diagnostics;
+using ImuravevSoft.LinearProblem;
 
 namespace ImuravevSoft.FejerTool
 {
     [Tool("Минимальный путь v2", "Поиск минимального пути в графе с помощью фейеровских итерационных методов")]
     [ReqData(typeof(Graph))]
+    [ReqData(typeof(LinearProblemData))]
     public partial class MinPathByFejer : BaseTool
     {
+        private class DataContainer
+        {
+            public Vector c;
+            public Vector b;
+            public Matrix A;
+
+
+            public bool IsGood;
+            public void FromGraph(Graph g, string startMark, string endMark)
+            {
+                IsGood = false;
+                using (var ms = new MemoryStream(1024))
+                {
+                    var wr = new StreamWriter(ms, Encoding.UTF8);
+                    g.Export(wr);
+                    wr.Flush();
+                    var reader = new StreamReader(ms, Encoding.UTF8, true);
+
+                    ms.Position = 0;
+
+                    c = Vector.FromStream(reader);
+                    A = Matrix.FromStream(reader);
+
+                    wr.Dispose();
+                    reader.Dispose();
+                }
+
+
+                b = new Vector(A.RowCount);
+                bool findStart = false;
+                bool findEnd = false;
+
+                for (int i = 0; i < g.VertexCount; i++)
+                {
+                    var v = g.Vertexes[i];
+                    if (v.Markers.Contains(startMark))
+                    {
+                        b[i] = 1;
+                        findStart = true;
+                    }
+                    if (v.Markers.Contains(endMark))
+                    {
+                        b[i] = -1;
+                        findEnd = true;
+                    }
+
+                    if (findEnd && findStart) break;
+                }
+                if (!(findEnd && findStart))
+                    IsGood = false;
+                else
+                    IsGood = true;
+            }
+
+            public void FromLinearProblem(LinearProblemData p)
+            {
+                IsGood = false;
+                c = new Vector(p.c.Length);
+                for (int i = 0; i < c.Length; i++)
+                    c[i] = p.c[i];
+
+                b = new Vector(p.b.Length);
+                for (int i = 0; i < b.Length; i++)
+                    b[i] = p.b[i];
+
+                A = new Matrix(p.A.GetLength(0), p.A.GetLength(1));
+                for (int i = 0; i < A.RowCount; i++)
+                    for (int j = 0; j < A.ColCount; j++)
+                        A[i, j] = p.A[i, j];
+
+                IsGood = true;
+            }
+        }
         public MinPathByFejer()
         {
             InitializeComponent();
@@ -37,74 +112,43 @@ namespace ImuravevSoft.FejerTool
             var endMark = marks[1];
             var border = Convert.ToDouble(tbHasEdge.Text);
 
-            var grafs = UsedData.OfType<Graph>();
-            foreach (var graph in grafs)
+
+            foreach (var data in UsedData)
             {
 
-                tbDialog.AppendText("Обработка графа " + graph.Name);
+                tbDialog.AppendText("Обработка данных " + data.Name);
                 tbDialog.AppendText("\n");
                 Vector b, c;
                 Matrix a;
 
-                if (cbAutoRelax.Checked)
-                    relax = graph.EdgeCount;
-
-               
-                using (var ms = new MemoryStream(1024))
+                var container = new DataContainer();
+                if (data is Graph)
+                    container.FromGraph(data as Graph, startMark, endMark);
+                else if (data is LinearProblemData)
+                    container.FromLinearProblem(data as LinearProblemData);
+                else
                 {
-                    var wr = new StreamWriter(ms, Encoding.UTF8);
-                    graph.Export(wr);
-                    wr.Flush();
-                    var reader = new StreamReader(ms, Encoding.UTF8, true);
-           
-                    ms.Position = 0;
-                
-                    c = Vector.FromStream(reader);
-                    a = Matrix.FromStream(reader);
-
-                    wr.Dispose();
-                    reader.Dispose();
-                }
-
-                b = new Vector(a.RowCount);
-                bool findStart = false;
-                bool findEnd = false;
-                tbDialog.AppendText("Поиск стартовой и конечной вершин.. ");
-                tbDialog.AppendText("\n");
-                for (int i = 0; i < graph.VertexCount; i++)
-                {
-                    var v = graph.Vertexes[i];
-                    if (v.Markers.Contains(startMark))
-                    {
-                        b[i] = 1;
-                        findStart = true;
-                    }
-                    if (v.Markers.Contains(endMark))
-                    {
-                        b[i] = -1;
-                        findEnd = true;
-                    }
-
-                    if (findEnd && findStart) break;
-                }
-                if (!findStart)
-                {
-                    tbDialog.AppendText("Не найдена стартовая вершина.. ");
-                    tbDialog.AppendText("\n");
-                }
-                if (!findEnd)
-                {
-                    tbDialog.AppendText("Не найдена конечная вершина.. ");
-                    tbDialog.AppendText("\n");
-                }
-                if (!(findEnd && findStart))
-                {
-                    tbDialog.AppendText("Невозможно продолжать.. ");
-                    tbDialog.AppendText("\n");
-                    tbDialog.AppendText("----------------------------------------------------------");
+                    tbDialog.AppendText("Плохие данные:  " + data.Name);
                     tbDialog.AppendText("\n");
                     continue;
                 }
+
+                if (container.IsGood)
+                {
+                    a = container.A;
+                    b = container.b;
+                    c = container.c;
+                }
+                else
+                {
+                    tbDialog.AppendText("Плохие данные:  " + data.Name);
+                    tbDialog.AppendText("\n");
+                    continue;
+                }
+
+
+                if (cbAutoRelax.Checked)
+                    relax = a.RowCount;
 
                 var x = new Vector(a.ColCount);
                 var u = new Vector(a.RowCount);
@@ -121,7 +165,7 @@ namespace ImuravevSoft.FejerTool
 
                 StreamWriter writer = null;
                 if (cbLogs.Checked)
-                    writer = new StreamWriter(path + "\\" + graph.Name);
+                    writer = new StreamWriter(path + "\\" + data.Name);
 
                 Stopwatch timer = new Stopwatch();
                 if (cbModMethod.Checked)
@@ -167,7 +211,8 @@ namespace ImuravevSoft.FejerTool
                         var predX = x;
                         var predY = u;
 
-                        if (Math.Abs(predX.SqrNorm() - pred1X.SqrNorm()) < eps) break;
+
+                        if (Math.Abs(Math.Sqrt(pred1X.SqrNorm()) - Math.Sqrt(predX.SqrNorm())) < eps) break;
 
                         // берем вектор из 1 в 3
 
@@ -215,25 +260,12 @@ namespace ImuravevSoft.FejerTool
                         if (writer != null)
                             writer.WriteLine(String.Join(";", x));
 
-                        if (Math.Abs(predX.SqrNorm() - x.SqrNorm()) < eps) break;
+                        if (Math.Abs(Math.Sqrt(x.SqrNorm()) - Math.Sqrt(predX.SqrNorm())) < eps) break;
+
                     }
                     timer.Stop();
                 }
-                for (int i = 0; i < x.Length; i++)
-                {
-                    if (x[i] > border)
-                        x[i] = 1.0;
-                    else
-                        x[i] = 0.0;
-                }
 
-                for (int i = 0; i < graph.EdgeCount; i++)
-                {
-                    if (x[i] > 0.5)
-                    {
-                        graph.Edges[i].Markers.Add(startMark);
-                    }
-                }
                 if (cbLogs.Checked)
                     writer.Dispose();
 
@@ -245,8 +277,31 @@ namespace ImuravevSoft.FejerTool
                 tbDialog.AppendText("\n");
                 tbDialog.AppendText("Результат");
                 tbDialog.AppendText("\n");
+                tbDialog.AppendText("Число ребер - " + x.Count(t => t > 0.5));
+                tbDialog.AppendText("\n");
                 tbDialog.AppendText("Стоимость пути: " + (x * c).ToString());
                 tbDialog.AppendText("\n");
+                tbDialog.AppendText(x.ToString());
+                tbDialog.AppendText("\n");
+                for (int i = 0; i < x.Length; i++)
+                {
+                    if (x[i] > border)
+                        x[i] = 1.0;
+                    else
+                        x[i] = 0.0;
+                }
+
+                if (data is Graph)
+                {
+                    var graph = data as Graph;
+                    for (int i = 0; i < graph.EdgeCount; i++)
+                    {
+                        if (x[i] > 0.5)
+                        {
+                            graph.Edges[i].Markers.Add(startMark);
+                        }
+                    }
+                }
                 tbDialog.AppendText(x.ToString());
                 tbDialog.AppendText("\n");
                 tbDialog.AppendText("----------------------------------------------------------");
@@ -259,6 +314,17 @@ namespace ImuravevSoft.FejerTool
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
             {
                 tbLogs.Text = folderBrowserDialog1.SelectedPath;
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            foreach (Graph g in UsedData.OfType<Graph>())
+            {
+                foreach (var ed in g.Edges)
+                {
+                    ed.Markers.Clear();
+                }
             }
         }
     }

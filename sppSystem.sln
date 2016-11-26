@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.Core", "ImuravevSoft.Core\ImuravevSoft.Core.csproj", "{8628C5FC-4A07-422E-8A96-209ADE500CDE}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.Visualizer", "Tools\ImuravevSoft.Visualizer\ImuravevSoft.Visualizer.csproj", "{72374048-3DD8-47CD-B1E0-3F3E149D5298}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.FejerTool", "Tools\ImuravevSoft.FejerTool\ImuravevSoft.FejerTool.csproj", "{671B9481-79CB-4742-A41F-0ED3EDE62F5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImuravevSoft.LinearProblem", "Data\ImuravevSoft.LinearProblem\ImuravevSoft.LinearProblem.csproj", "{C1B4F684-E694-48BB-9CA8-98734631411A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{671B9481-79CB-4742-A41F-0ED3EDE62F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{671B9481-79CB-4742-A41F-0ED3EDE62F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{671B9481-79CB-4742-A41F-0ED3EDE62F5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1B4F684-E694-48BB-9CA8-98734631411A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1B4F684-E694-48BB-9CA8-98734631411A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1B4F684-E694-48BB-9CA8-98734631411A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1B4F684-E694-48BB-9CA8-98734631411A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,5 +57,6 @@ Global
 		{C00A0D3C-F25E-400F-84FC-22B4EAE32A8F} = {D67E8D8D-1802-441E-9D8B-88EF3139468C}
 		{72374048-3DD8-47CD-B1E0-3F3E149D5298} = {79CA0DBB-768C-4AD6-84B2-AACDFB1BEE01}
 		{671B9481-79CB-4742-A41F-0ED3EDE62F5A} = {79CA0DBB-768C-4AD6-84B2-AACDFB1BEE01}
+		{C1B4F684-E694-48BB-9CA8-98734631411A} = {D67E8D8D-1802-441E-9D8B-88EF3139468C}
 	EndGlobalSection
 EndGlobal

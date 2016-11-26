@@ -8,8 +8,6 @@ namespace ImuravevSoft.Shell.Control
         private readonly int typeMsgColWidth = 50;
         private readonly int dateTimeMsgColWidth = 150;
 
-        private readonly int typeColIndex = 0;
-        private readonly int dateColIndex = 1;
         private readonly int msgColIndex = 2;
 
         public MessageList()

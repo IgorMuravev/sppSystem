@@ -227,26 +227,16 @@ namespace ImuravevSoft.Visualizer.Classes
                     number++;
                     list.Add(vertex);
                 }
-                //var mins = Mins(list, roots, 2);
-                //for (int k = 0; k < mins.Count; k++)
-                //{
-                //    int d;
-                //    DistanceToRoots(list[mins[k]], roots, out d);
-                //    Vertex v = null;
-                //    if (!addedRoots.ContainsKey(roots[d]))
-                //        addedRoots.Add(roots[d], new Vertex(roots[d], ""));
-
-                //    v = addedRoots[roots[d]];
-
-                //    edges.Add(new Edge(list[mins[k]], v));
-                //}
                 vertexes.AddRange(list);
                 var triangles = triangulator.Triangulation(Cast(list));
                 foreach (var t in triangles)
                 {
                     edges.Add(new Edge(list[t.a], list[t.b], VertexPoint.Distance(list[t.a], list[t.b])));
+                    edges.Add(new Edge(list[t.b], list[t.a], VertexPoint.Distance(list[t.a], list[t.b])));
                     edges.Add(new Edge(list[t.b], list[t.c], VertexPoint.Distance(list[t.b], list[t.c])));
+                    edges.Add(new Edge(list[t.c], list[t.b], VertexPoint.Distance(list[t.b], list[t.c])));
                     edges.Add(new Edge(list[t.a], list[t.c], VertexPoint.Distance(list[t.a], list[t.c])));
+                    edges.Add(new Edge(list[t.c], list[t.a], VertexPoint.Distance(list[t.a], list[t.c])));
                 }
 
 
@@ -266,30 +256,19 @@ namespace ImuravevSoft.Visualizer.Classes
                     list.Add(vertex);
                 }
 
-                //var mins = Mins(list, roots, 2);
-                //for (int k = 0; k < mins.Count; k++)
-                //{
-                //    int d;
-                //    DistanceToRoots(list[mins[k]], roots, out d);
-                //    Vertex v = null;
-                //    if (!addedRoots.ContainsKey(roots[d]))
-                //        addedRoots.Add(roots[d], new Vertex(roots[d], ""));
-
-                //    v = addedRoots[roots[d]];
-
-                //    edges.Add(new Edge(list[mins[k]], v));
-                //}
                 vertexes.AddRange(list);
                 var triangles = triangulator.Triangulation(Cast(list));
                 foreach (var t in triangles)
                 {
                     edges.Add(new Edge(list[t.a], list[t.b], VertexPoint.Distance(list[t.a], list[t.b])));
+                    edges.Add(new Edge(list[t.b], list[t.a], VertexPoint.Distance(list[t.a], list[t.b])));
                     edges.Add(new Edge(list[t.b], list[t.c], VertexPoint.Distance(list[t.b], list[t.c])));
+                    edges.Add(new Edge(list[t.c], list[t.b], VertexPoint.Distance(list[t.b], list[t.c])));
                     edges.Add(new Edge(list[t.a], list[t.c], VertexPoint.Distance(list[t.a], list[t.c])));
+                    edges.Add(new Edge(list[t.c], list[t.a], VertexPoint.Distance(list[t.a], list[t.c])));
                 }
 
             }
-           // vertexes.AddRange(addedRoots.Values);
             edges = edges.Distinct(new EdgeComparer()).ToList();
             return new Graph(vertexes, edges);
         }
@@ -299,7 +278,7 @@ namespace ImuravevSoft.Visualizer.Classes
         {
             bool IEqualityComparer<Edge>.Equals(Edge x, Edge y)
             {
-                return x.GetHashCode() == y.GetHashCode();
+                return x.V1 == y.V1 && x.V2 == y.V2;
             }
 
             int IEqualityComparer<Edge>.GetHashCode(Edge obj)

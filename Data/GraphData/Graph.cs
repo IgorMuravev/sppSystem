@@ -130,6 +130,12 @@ namespace ImuravevSoft.GraphData
                     g.DrawLine(Pens.Black, p1.X, p1.Y, p2.X, p2.Y);
 
 
+                var centerX = (p1.X + p2.X) / 2;
+                var centerY =(p1.Y + p2.Y) / 2;
+
+                g.DrawString(e.Weight.ToString("f3"), font, Brushes.Black, centerX, centerY);
+
+
 
             }
         }
@@ -143,15 +149,15 @@ namespace ImuravevSoft.GraphData
         {
             using (var writer = new StreamWriter(fileName))
             {
-                writer.WriteLine(String.Join(";", Edges.Select(x => (int)(100 * x.Weight))));
+                writer.WriteLine(String.Join(";", Edges.Select(x => x.Weight)));
                 writer.WriteLine(String.Format("{0};{1}", VertexCount, EdgeCount));
                 foreach (var vertex in Vertexes)
                 {
                     var row = new int[EdgeCount];
                     for (int i = 0; i < EdgeCount; i++)
                     {
-                        if (vertex == Edges[i].V1) row[i] = 1;
-                        if (vertex == Edges[i].V2) row[i] = -1;
+                        if (vertex == Edges[i].V1) row[i] = 100;
+                        if (vertex == Edges[i].V2) row[i] = -100;
                     }
                     writer.WriteLine(String.Join(";", row));
                 }
@@ -161,11 +167,11 @@ namespace ImuravevSoft.GraphData
         public void Export(StreamWriter writer)
         {
 
-            writer.WriteLine(String.Join(";", Edges.Select(x => x.Weight)));
-            writer.WriteLine(String.Format("{0};{1}", VertexCount, 2 * EdgeCount));
+            writer.WriteLine(String.Join(";", Edges.Select(x => (int)(100 * x.Weight))));
+            writer.WriteLine(String.Format("{0};{1}", VertexCount, EdgeCount));
             foreach (var vertex in Vertexes)
             {
-                var row = new int[2 * EdgeCount];
+                var row = new int[EdgeCount];
                 for (int i = 0; i < EdgeCount; i++)
                 {
                     if (vertex == Edges[i].V1) row[i] = 1;
