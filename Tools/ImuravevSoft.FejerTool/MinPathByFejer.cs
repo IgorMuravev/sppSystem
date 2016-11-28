@@ -99,9 +99,6 @@ namespace ImuravevSoft.FejerTool
         {
             InitializeComponent();
         }
-
-
-
         private void btnStart_Click(object sender, EventArgs e)
         {
             tbDialog.Clear();
@@ -232,7 +229,6 @@ namespace ImuravevSoft.FejerTool
                 tbLogs.Text = folderBrowserDialog1.SelectedPath;
             }
         }
-
         private void btnClear_Click(object sender, EventArgs e)
         {
             foreach (Graph g in UsedData.OfType<Graph>())
@@ -243,13 +239,10 @@ namespace ImuravevSoft.FejerTool
                 }
             }
         }
-
         private void cbUseScript_CheckedChanged(object sender, EventArgs e)
         {
             panel1.Enabled = !cbUseScript.Checked;
         }
-
-
 
     }
 
