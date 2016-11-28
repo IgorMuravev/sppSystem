@@ -50,6 +50,7 @@
       <DependentUpon>MinPathByFejer.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptParser.cs" />
     <Compile Include="Vector.cs" />
   </ItemGroup>
   <ItemGroup>

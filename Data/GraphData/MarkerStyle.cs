@@ -11,7 +11,6 @@ namespace ImuravevSoft.GraphData
     {
         public Color Color { get; set; }
         public int Width { get; set; }
-
         public double Depth { get; set; }
     }
 }

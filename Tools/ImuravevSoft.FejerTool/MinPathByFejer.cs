@@ -13,6 +13,7 @@ using fLib;
 using System.IO;
 using System.Diagnostics;
 using ImuravevSoft.LinearProblem;
+using System.Threading.Tasks;
 
 namespace ImuravevSoft.FejerTool
 {
@@ -99,6 +100,8 @@ namespace ImuravevSoft.FejerTool
             InitializeComponent();
         }
 
+
+
         private void btnStart_Click(object sender, EventArgs e)
         {
             tbDialog.Clear();
@@ -112,203 +115,116 @@ namespace ImuravevSoft.FejerTool
             var endMark = marks[1];
             var border = Convert.ToDouble(tbHasEdge.Text);
 
+            FejerParams[] scripts = null;
+            if (cbUseScript.Checked)
+                scripts = ScriptParser.Parse(tbScript.Text);
+            else
+                scripts = new FejerParams[] { new FejerParams()
+                { Autorelax = cbAutoRelax.Checked,
+                  IsNewMethod = cbModMethod.Checked,
+                  EdgeBorder = border,
+                  Eps = eps,
+                  Log = cbLogs.Checked,
+                  Relax = relax,
+                  Logfile = tbLogs.Text,
+                } };
 
-            foreach (var data in UsedData)
+            btnClear.PerformClick();
+            btnStart.Enabled = false;
+            var task = Task.Factory.StartNew(() =>
             {
-
-                tbDialog.AppendText("Обработка данных " + data.Name);
-                tbDialog.AppendText("\n");
-                Vector b, c;
-                Matrix a;
-
-                var container = new DataContainer();
-                if (data is Graph)
-                    container.FromGraph(data as Graph, startMark, endMark);
-                else if (data is LinearProblemData)
-                    container.FromLinearProblem(data as LinearProblemData);
-                else
+                foreach (var p in scripts)
                 {
-                    tbDialog.AppendText("Плохие данные:  " + data.Name);
-                    tbDialog.AppendText("\n");
-                    continue;
-                }
-
-                if (container.IsGood)
-                {
-                    a = container.A;
-                    b = container.b;
-                    c = container.c;
-                }
-                else
-                {
-                    tbDialog.AppendText("Плохие данные:  " + data.Name);
-                    tbDialog.AppendText("\n");
-                    continue;
-                }
-
-
-                if (cbAutoRelax.Checked)
-                    relax = a.RowCount;
-
-                var x = new Vector(a.ColCount);
-                var u = new Vector(a.RowCount);
-
-                var coeff = relax / a.GetNorm();
-
-                var normSum = 1 / (b.SqrNorm() + c.SqrNorm());
-
-                var ccoeff = normSum * c;
-                var bcoeff = normSum * b;
-                int it = 0;
-                tbDialog.AppendText("Расчет начат");
-                tbDialog.AppendText("\n");
-
-                StreamWriter writer = null;
-                if (cbLogs.Checked)
-                    writer = new StreamWriter(path + "\\" + data.Name);
-
-                Stopwatch timer = new Stopwatch();
-                if (cbModMethod.Checked)
-                {
-                    timer.Start();
-                    while (true)
+                    foreach (var data in UsedData)
                     {
-
-                        // берем 3 точки
-                        x = fMath.fi1(x, a, b, coeff);
-                        u = fMath.fi2(u, a, c, coeff);
-
-                        var result = fMath.Fi(new Tuple<Vector, Vector>(x, u), b, c, ccoeff, bcoeff);
-                        x = !result.Item1;
-                        u = result.Item2;
-
-
-
-                        var pred2x = x;
-                        var pred2Y = u;
-
-                        x = fMath.fi1(x, a, b, coeff);
-                        u = fMath.fi2(u, a, c, coeff);
-
-                        result = fMath.Fi(new Tuple<Vector, Vector>(x, u), b, c, ccoeff, bcoeff);
-                        x = !result.Item1;
-                        u = result.Item2;
-
-
-
-                        var pred1X = x;
-                        var pred1Y = u;
-
-                        x = fMath.fi1(x, a, b, coeff);
-                        u = fMath.fi2(u, a, c, coeff);
-
-                        result = fMath.Fi(new Tuple<Vector, Vector>(x, u), b, c, ccoeff, bcoeff);
-                        x = !result.Item1;
-                        u = result.Item2;
-
-
-
-                        var predX = x;
-                        var predY = u;
-
-
-                        if (Math.Abs(Math.Sqrt(pred1X.SqrNorm()) - Math.Sqrt(predX.SqrNorm())) < eps) break;
-
-                        // берем вектор из 1 в 3
-
-                        var gradX = predX - pred2x;
-
-                        var grad = gradX;
-                        var len = Math.Sqrt(grad.SqrNorm());
-                        var normCoeff = 1d / len;
-                        grad = normCoeff * grad;
-                        //   Console.WriteLine(!grad);
-
-
-
-                        var gradY = predY - pred2Y;
-
-                        x = !(pred2x + 2 * gradX);
-                        u = pred2Y + 2 * gradY;
-
-                        if (writer != null)
-                            writer.WriteLine(String.Join(";", x));
-
-                        it++;
-                    }
-                    timer.Stop();
-                }
-                else
-                {
-                    timer.Start();
-
-                    while (true)
-                    {
-
-                        var predX = x;
-                        var predY = u;
-
-                        x = fMath.fi1(x, a, b, coeff);
-                        u = fMath.fi2(u, a, c, coeff);
-
-                        var result = fMath.Fi(new Tuple<Vector, Vector>(x, u), b, c, ccoeff, bcoeff);
-                        x = !result.Item1;
-                        u = result.Item2;
-
-
-                        it++;
-                        if (writer != null)
-                            writer.WriteLine(String.Join(";", x));
-
-                        if (Math.Abs(Math.Sqrt(x.SqrNorm()) - Math.Sqrt(predX.SqrNorm())) < eps) break;
-
-                    }
-                    timer.Stop();
-                }
-
-                if (cbLogs.Checked)
-                    writer.Dispose();
-
-                tbDialog.AppendText("Расчет закончен ");
-                tbDialog.AppendText("\n");
-                tbDialog.AppendText("Число итераций: " + it.ToString());
-                tbDialog.AppendText("\n");
-                tbDialog.AppendText("Затрачено времени(мс): " + timer.ElapsedMilliseconds);
-                tbDialog.AppendText("\n");
-                tbDialog.AppendText("Результат");
-                tbDialog.AppendText("\n");
-                tbDialog.AppendText("Число ребер - " + x.Count(t => t > 0.5));
-                tbDialog.AppendText("\n");
-                tbDialog.AppendText("Стоимость пути: " + (x * c).ToString());
-                tbDialog.AppendText("\n");
-                tbDialog.AppendText(x.ToString());
-                tbDialog.AppendText("\n");
-                for (int i = 0; i < x.Length; i++)
-                {
-                    if (x[i] > border)
-                        x[i] = 1.0;
-                    else
-                        x[i] = 0.0;
-                }
-
-                if (data is Graph)
-                {
-                    var graph = data as Graph;
-                    for (int i = 0; i < graph.EdgeCount; i++)
-                    {
-                        if (x[i] > 0.5)
+                        Invoke(new Action(() =>
                         {
-                            graph.Edges[i].Markers.Add(startMark);
+                            tbDialog.AppendText("Обработка данных " + data.Name);
+                            tbDialog.AppendText("\n");
+                        }));
+
+                        Vector b, c;
+                        Matrix a;
+
+                        var container = new DataContainer();
+                        if (data is Graph)
+                            container.FromGraph(data as Graph, startMark, endMark);
+                        else if (data is LinearProblemData)
+                            container.FromLinearProblem(data as LinearProblemData);
+                        else
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                tbDialog.AppendText("Плохие данные:  " + data.Name);
+                                tbDialog.AppendText("\n");
+                            }));
+
+                            continue;
                         }
+
+                        if (container.IsGood)
+                        {
+                            a = container.A;
+                            b = container.b;
+                            c = container.c;
+                        }
+                        else
+                        {
+                            Invoke(new Action(() =>
+                            {
+                                tbDialog.AppendText("Плохие данные:  " + data.Name);
+                                tbDialog.AppendText("\n");
+                            }));
+
+                            continue;
+                        }
+
+                        p.A = a;
+                        p.b = b;
+                        p.c = c;
+
+                        var result = FejerCalc.Computing(p);
+
+                        if (data is Graph)
+                        {
+                            var graph = data as Graph;
+                            for (int i = 0; i < graph.EdgeCount; i++)
+                            {
+                                if (result.x[i] > 0.5)
+                                {
+                                    graph.Edges[i].Markers.Add(startMark);
+                                }
+                            }
+                        }
+                        Invoke(new Action(() =>
+                        {
+                            tbDialog.AppendText("Расчет закончен ");
+                            tbDialog.AppendText("\n");
+                            tbDialog.AppendText("Число итераций: " + result.Iterations.ToString());
+                            tbDialog.AppendText("\n");
+                            tbDialog.AppendText("Затрачено времени(мс): " + result.Ms);
+                            tbDialog.AppendText("\n");
+                            tbDialog.AppendText("Результат");
+                            tbDialog.AppendText("\n");
+                            tbDialog.AppendText("Число ребер - " + result.x.Count(t => t > 0.5));
+                            tbDialog.AppendText("\n");
+                            tbDialog.AppendText("Стоимость пути: " + (result.x * c).ToString());
+                            tbDialog.AppendText("\n");
+                            tbDialog.AppendText(result.x.ToString());
+                            tbDialog.AppendText("\n");
+                            tbDialog.AppendText("----------------------------------------------------------");
+                            tbDialog.AppendText("\n");
+                        }));
+
                     }
                 }
-                tbDialog.AppendText(x.ToString());
-                tbDialog.AppendText("\n");
-                tbDialog.AppendText("----------------------------------------------------------");
-                tbDialog.AppendText("\n");
-            }
-        }
+                Invoke(new Action(() =>
+                {
+                    btnStart.Enabled = true;
+                }));
+            });
 
+        }
         private void btnSelDir_Click(object sender, EventArgs e)
         {
             if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
@@ -327,5 +243,217 @@ namespace ImuravevSoft.FejerTool
                 }
             }
         }
+
+        private void cbUseScript_CheckedChanged(object sender, EventArgs e)
+        {
+            panel1.Enabled = !cbUseScript.Checked;
+        }
+
+
+
     }
+
+    internal class FejerCalc
+    {
+        private static FejerResult StdMethod(FejerParams p)
+        {
+            var x = new Vector(p.A.ColCount);
+            var u = new Vector(p.A.RowCount);
+            var relax = 0.0;
+
+            if (p.Autorelax)
+                relax = p.A.RowCount;
+            else
+                relax = p.Relax;
+
+            var coeff = relax / p.A.GetNorm();
+
+            var normSum = 1 / (p.b.SqrNorm() + p.c.SqrNorm());
+
+            var ccoeff = normSum * p.c;
+            var bcoeff = normSum * p.b;
+            int it = 0;
+
+            StreamWriter writer = null;
+            if (p.Log)
+                writer = new StreamWriter(p.Logfile);
+            var timer = new Stopwatch();
+            timer.Start();
+
+            while (true)
+            {
+
+                var predX = x;
+                var predY = u;
+
+                x = fMath.fi1(x, p.A, p.b, coeff);
+                u = fMath.fi2(u, p.A, p.c, coeff);
+
+                var result = fMath.Fi(new Tuple<Vector, Vector>(x, u), p.b, p.c, ccoeff, bcoeff);
+                x = !result.Item1;
+                u = result.Item2;
+
+
+                it++;
+                if (writer != null)
+                    writer.WriteLine(String.Join(";", x));
+
+                if (Math.Abs(Math.Sqrt(x.SqrNorm()) - Math.Sqrt(predX.SqrNorm())) < p.Eps) break;
+
+            }
+            timer.Stop();
+            if (p.Log)
+                writer.Dispose();
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (x[i] > p.EdgeBorder)
+                    x[i] = 1.0;
+                else
+                    x[i] = 0.0;
+            }
+            return new FejerResult()
+            {
+                Iterations = it,
+                Ms = timer.ElapsedMilliseconds,
+                x = x,
+                u = u
+            };
+        }
+        private static FejerResult ModMethod(FejerParams p)
+        {
+            var x = new Vector(p.A.ColCount);
+            var u = new Vector(p.A.RowCount);
+            var relax = 0.0;
+
+            if (p.Autorelax)
+                relax = p.A.RowCount;
+            else
+                relax = p.Relax;
+
+            var coeff = relax / p.A.GetNorm();
+
+            var normSum = 1 / (p.b.SqrNorm() + p.c.SqrNorm());
+
+            var ccoeff = normSum * p.c;
+            var bcoeff = normSum * p.b;
+            int it = 0;
+
+            StreamWriter writer = null;
+            if (p.Log)
+                writer = new StreamWriter(p.Logfile);
+            var timer = new Stopwatch();
+            timer.Start();
+
+            while (true)
+            {
+                x = fMath.fi1(x, p.A, p.b, coeff);
+                u = fMath.fi2(u, p.A, p.c, coeff);
+
+                var result = fMath.Fi(new Tuple<Vector, Vector>(x, u), p.b, p.c, ccoeff, bcoeff);
+                x = !result.Item1;
+                u = result.Item2;
+
+
+
+                var pred2x = x;
+                var pred2Y = u;
+
+                x = fMath.fi1(x, p.A, p.b, coeff);
+                u = fMath.fi2(u, p.A, p.c, coeff);
+
+                result = fMath.Fi(new Tuple<Vector, Vector>(x, u), p.b, p.c, ccoeff, bcoeff);
+                x = !result.Item1;
+                u = result.Item2;
+
+
+
+                var pred1X = x;
+                var pred1Y = u;
+
+                x = fMath.fi1(x, p.A, p.b, coeff);
+                u = fMath.fi2(u, p.A, p.c, coeff);
+
+                result = fMath.Fi(new Tuple<Vector, Vector>(x, u), p.b, p.c, ccoeff, bcoeff);
+                x = !result.Item1;
+                u = result.Item2;
+
+
+
+                var predX = x;
+                var predY = u;
+
+
+                if (Math.Abs(Math.Sqrt(pred1X.SqrNorm()) - Math.Sqrt(predX.SqrNorm())) < p.Eps) break;
+
+                var gradX = predX - pred2x;
+
+                var grad = gradX;
+                var len = Math.Sqrt(grad.SqrNorm());
+                var normCoeff = 1d / len;
+                grad = normCoeff * grad;
+
+                var gradY = predY - pred2Y;
+
+                x = !(pred2x + 2 * gradX);
+                u = pred2Y + 2 * gradY;
+
+                if (writer != null)
+                    writer.WriteLine(String.Join(";", x));
+
+                it++;
+            }
+            timer.Stop();
+            if (p.Log)
+                writer.Dispose();
+
+
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (x[i] > p.EdgeBorder)
+                    x[i] = 1.0;
+                else
+                    x[i] = 0.0;
+            }
+
+            return new FejerResult()
+            {
+                Iterations = it,
+                Ms = timer.ElapsedMilliseconds,
+                x = x,
+                u = u
+            };
+        }
+        public static FejerResult Computing(FejerParams p)
+        {
+            return p.IsNewMethod ? ModMethod(p) : StdMethod(p);
+        }
+    }
+
+    internal class FejerParams
+    {
+        public double Relax;
+        public bool Autorelax;
+        public double Eps;
+        public double EdgeBorder;
+
+        public bool IsNewMethod;
+        public bool Log;
+        public string Logfile;
+
+        public Matrix A;
+        public Vector c;
+        public Vector b;
+
+    }
+
+    internal class FejerResult
+    {
+        public Vector x;
+        public Vector u;
+
+        public long Iterations;
+        public long Ms;
+    }
+
 }

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Windows.Forms;
 
 namespace ImuravevSoft.GraphData
 {
@@ -145,21 +146,21 @@ namespace ImuravevSoft.GraphData
             return Border;
         }
 
-        public void Export(string fileName)
+        public void Export(string fileName, string separator = ";")
         {
             using (var writer = new StreamWriter(fileName))
             {
-                writer.WriteLine(String.Join(";", Edges.Select(x => x.Weight)));
-                writer.WriteLine(String.Format("{0};{1}", VertexCount, EdgeCount));
+                writer.WriteLine(String.Join(separator, Edges.Select(x => x.Weight)));
+                writer.WriteLine(String.Format("{0}"+separator+"{1}", VertexCount, EdgeCount));
                 foreach (var vertex in Vertexes)
                 {
                     var row = new int[EdgeCount];
                     for (int i = 0; i < EdgeCount; i++)
                     {
-                        if (vertex == Edges[i].V1) row[i] = 100;
-                        if (vertex == Edges[i].V2) row[i] = -100;
+                        if (vertex == Edges[i].V1) row[i] = 1;
+                        if (vertex == Edges[i].V2) row[i] = -1;
                     }
-                    writer.WriteLine(String.Join(";", row));
+                    writer.WriteLine(String.Join(separator, row));
                 }
             }
         }
@@ -167,7 +168,7 @@ namespace ImuravevSoft.GraphData
         public void Export(StreamWriter writer)
         {
 
-            writer.WriteLine(String.Join(";", Edges.Select(x => (int)(100 * x.Weight))));
+            writer.WriteLine(String.Join(";", Edges.Select(x => x.Weight)));
             writer.WriteLine(String.Format("{0};{1}", VertexCount, EdgeCount));
             foreach (var vertex in Vertexes)
             {
@@ -181,6 +182,14 @@ namespace ImuravevSoft.GraphData
             }
         }
 
+        public override void Export()
+        {
+            var ofd = new SaveFileDialog();
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                Export(ofd.FileName);
+            }
+        }
 
         public void Import(string filename)
         {
