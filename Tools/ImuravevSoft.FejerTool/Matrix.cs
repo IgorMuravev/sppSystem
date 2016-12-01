@@ -69,4 +69,16 @@ namespace fLib
 
   
     }
+    internal class MatrixOperations
+    {
+        public static double GetNorm(ref double[][] rows)
+        {
+            var result = 0.0;
+
+            for (int i = 0; i < rows.Length; i++)
+                for (int j = 0; j < rows[i].Length; j++)
+                    result += rows[i][j] * rows[i][j];
+            return result;
+        }
+    }
 }

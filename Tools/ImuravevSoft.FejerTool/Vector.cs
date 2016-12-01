@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ImuravevSoft.FejerTool.RareField;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,12 @@ namespace fLib
         public Vector(int size)
         {
             values = new double[size];
+        }
+        public Vector(double[] v)
+        {
+            values = new double[v.Length];
+            for (int i = 0; i < v.Length; i++)
+                values[i] = v[i];
         }
         public double this[int i]
         {
@@ -58,7 +65,6 @@ namespace fLib
                 r[i] = a * v[i];
             return r;
         }
-
         public static Vector operator !(Vector v)
         {
             var r = new Vector(v.Length);
@@ -66,7 +72,6 @@ namespace fLib
                 r[i] = v[i] > 0 ? v[i] : 0;
             return r;
         }
-
         public static Vector operator +(Vector v1, Vector v2)
         {
             var summ = new Vector(v1.Length);
@@ -74,7 +79,6 @@ namespace fLib
                 summ[i] = v1[i] + v2[i];
             return summ;
         }
-
         public static Vector operator -(Vector v1, Vector v2)
         {
             var sub = new Vector(v1.Length);
@@ -101,7 +105,6 @@ namespace fLib
             var res = 0.0;
             for (int i = 0; i < v1.Length; i++)
                 res += (v1[i] - v2[i]) * (v1[i] - v2[i]);
-
             return Math.Sqrt(res);
         }
 
@@ -113,6 +116,85 @@ namespace fLib
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<double>)values).GetEnumerator();
+        }
+    }
+
+    internal class VectorOperations
+    {
+        public static double ScalarMult(ref double[] v1,ref double[] v2)
+        {
+            var summ = 0.0;
+            for (int i = 0; i < v1.Length; i++)
+                summ += v1[i] * v2[i];
+            return summ;
+        }
+        public static void Mult(ref double[] v, double coeff)
+        {
+            for (int i = 0; i < v.Length; i++)
+                v[i] = coeff * v[i];
+        }
+        public static void Pos(ref double[] v)
+        {
+            for (int i = 0; i < v.Length; i++)
+                if (v[i] < 0) v[i] = 0;
+        }
+        public static void Add(ref double[] v1, ref double[] v2)
+        {
+            for (int i = 0; i < v1.Length; i++)
+                v1[i] = v1[i] + v2[i];
+        }
+        public static void Sub(ref double[] v1, ref double[] v2)
+        {
+            for (int i = 0; i < v1.Length; i++)
+                v1[i] = v1[i] - v2[i];
+        }
+        public static double[] Clone(ref double[] v)
+        {
+            var result = new double[v.Length];
+            for (int i = 0; i < v.Length; i++)
+                result[i] = v[i];
+            return result;
+        }
+        public static double GetSqrNorm(ref double[] v)
+        {
+            var res = 0.0;
+            for (int i = 0; i < v.Length; i++)
+                res += v[i] * v[i];
+            return res;
+        }
+
+
+        public static double ScalarMult(ref double[] v , ref RfVector v1)
+        {
+            var summ = 0.0;
+            for (int i = 0; i < v1.Pos.Length; i++)
+                summ += v1.Values[i] * v[v1.Pos[i]];
+            return summ;
+        }
+        public static void Mult(ref RfVector v, double coeff)
+        {
+            for (int i = 0; i < v.Values.Length; i++)
+                v.Values[i] = coeff * v.Values[i];
+        }
+        public static RfVector Clone(ref RfVector v)
+        {
+            var res = new RfVector();
+            res.Lenght = v.Lenght;
+            res.Pos = new int[v.Lenght];
+            res.Values = new double[v.Lenght];
+            for (int i = 0; i < v.Values.Length; i++)
+            {
+                res.Values[i] = v.Values[i];
+                res.Pos[i] = v.Pos[i];
+            }
+            return res;
+        }
+        public static void Add(ref double[] v, ref RfVector v1)
+        {
+            for (int i = 0; i < v1.Lenght; i++)
+            {
+                v[v1.Pos[i]] += v1.Values[i];
+            }
         }
     }
 }
