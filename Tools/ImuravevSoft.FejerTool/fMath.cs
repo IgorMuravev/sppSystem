@@ -140,7 +140,7 @@ namespace fLib
         public static void FiU(ref double[] u, ref double[] bcoeff, double sub)
         {
             var forU = VectorOperations.Clone(ref bcoeff);
-            VectorOperations.Mult(ref forU, sub);
+            VectorOperations.Mult(ref forU,sub);
             VectorOperations.Add(ref u, ref forU);
         }
 

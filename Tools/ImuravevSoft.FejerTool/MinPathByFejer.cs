@@ -735,6 +735,8 @@ namespace ImuravevSoft.FejerTool
         private static FejerResult StdMethodFRarefield(FejerParams p)
         {
             var x = new double[p.A.ColCount];
+            for (int i = 0; i < x.Length; i++)
+                x[i] = -1;
             var u = new double[p.A.RowCount];
             var relax = 0.0;
 
@@ -757,7 +759,7 @@ namespace ImuravevSoft.FejerTool
                 cols[i] = new RfVector(bc);
             };
 
-            
+
             #endregion
 
             #region расчет доп коэффов
@@ -815,8 +817,10 @@ namespace ImuravevSoft.FejerTool
                 t1 = Task.Factory.StartNew(() =>
                 {
                     fMathFRarefield.FiX(ref x, ref ccoeff, sub);
-                    VectorOperations.Pos(ref x);
+
                 });
+
+
 
                 t2 = Task.Factory.StartNew(() =>
                 {
@@ -826,24 +830,94 @@ namespace ImuravevSoft.FejerTool
                 Task.WaitAll(t1, t2);
 
 
-                it++;
-                if (writer != null)
-                    writer.WriteLine(String.Join(";", x));
 
+                var bufX = VectorOperations.Clone(ref x);
+
+
+                VectorOperations.Pos(ref x);
+
+
+                var bufAX = VectorOperations.Clone(ref x);
+
+                VectorOperations.Sub(ref bufX, ref predX);
+                VectorOperations.Sub(ref bufAX, ref predX);
+
+
+                if (writer != null)
+                    writer.WriteLine(VectorOperations.ScalarMult(ref bufX, ref bufAX));
+
+
+                if (VectorOperations.ScalarMult(ref bufX, ref bufAX) < 1e-5)
+                {
+
+                    var vector = bufAX;
+                    var point = x;
+                    var lambda = 5d;
+                    var prevAvgEps = 0d;
+                    var normB = Math.Sqrt(VectorOperations.GetSqrNorm(ref b));
+                    var avgEps = 0d;
+                    for (int i = 0; i < rows.Length; i++)
+                    {
+                        var buf = VectorOperations.ScalarMult(ref point, ref rows[i]);
+                        avgEps += buf * buf;
+                    }
+                    avgEps = Math.Abs(Math.Sqrt(avgEps) - normB);
+                    prevAvgEps = avgEps;
+
+
+
+                    while (true)
+                    {
+                        var v = VectorOperations.Clone(ref vector);
+                        var p1 = VectorOperations.Clone(ref point);
+                        VectorOperations.Mult(ref v, lambda);
+                        VectorOperations.Add(ref p1, ref v);
+
+                        avgEps = 0d;
+                        for (int i = 0; i < rows.Length; i++)
+                        {
+                            var buf = VectorOperations.ScalarMult(ref p1, ref rows[i]);
+                            avgEps += buf * buf;
+                        }
+                        avgEps = Math.Abs(Math.Sqrt(avgEps) - normB);
+
+                        if (Math.Abs(normB - avgEps) < p.Eps)
+                        { x = p1; break; }
+
+
+                        if (avgEps < prevAvgEps)
+                        {
+                            point = p1;
+                            prevAvgEps = avgEps;
+                        }
+                        else
+                        {
+                            lambda = 0.5 * lambda;
+                        }
+
+                    }
+
+                    break;
+
+                }
+
+                it++;
                 if (Math.Abs(Math.Sqrt(VectorOperations.GetSqrNorm(ref x)) - Math.Sqrt(VectorOperations.GetSqrNorm(ref predX))) < p.Eps) break;
+
+
 
             }
             timer.Stop();
             if (p.Log)
                 writer.Dispose();
 
-            for (int i = 0; i < x.Length; i++)
-            {
-                if (x[i] > p.EdgeBorder)
-                    x[i] = 1.0;
-                else
-                    x[i] = 0.0;
-            }
+            //for (int i = 0; i < x.Length; i++)
+            //{
+            //    if (x[i] > p.EdgeBorder)
+            //        x[i] = 1.0;
+            //    else
+            //        x[i] = 0.0;
+            //}
             return new FejerResult()
             {
                 Iterations = it,

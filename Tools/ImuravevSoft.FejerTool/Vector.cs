@@ -8,7 +8,7 @@ using System.Text;
 
 namespace fLib
 {
-    internal class Vector: IEnumerable<double>
+    internal class Vector : IEnumerable<double>
     {
         private double[] values;
 
@@ -89,12 +89,12 @@ namespace fLib
 
         public override string ToString()
         {
-            return "[ "+ String.Join(" ; ", values) + " ]";
+            return "[ " + String.Join(" ; ", values) + " ]";
         }
 
         public static Vector FromStream(StreamReader reader)
         {
-            var vals = reader.ReadLine().Trim().Split(new[] { ';' },StringSplitOptions.RemoveEmptyEntries);
+            var vals = reader.ReadLine().Trim().Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             var values = new Vector(vals.Length);
             for (int i = 0; i < vals.Length; i++)
                 values[i] = Convert.ToDouble(vals[i]);
@@ -121,7 +121,7 @@ namespace fLib
 
     internal class VectorOperations
     {
-        public static double ScalarMult(ref double[] v1,ref double[] v2)
+        public static double ScalarMult(ref double[] v1, ref double[] v2)
         {
             var summ = 0.0;
             for (int i = 0; i < v1.Length; i++)
@@ -137,6 +137,7 @@ namespace fLib
         {
             for (int i = 0; i < v.Length; i++)
                 if (v[i] < 0) v[i] = 0;
+              
         }
         public static void Add(ref double[] v1, ref double[] v2)
         {
@@ -164,7 +165,7 @@ namespace fLib
         }
 
 
-        public static double ScalarMult(ref double[] v , ref RfVector v1)
+        public static double ScalarMult(ref double[] v, ref RfVector v1)
         {
             var summ = 0.0;
             for (int i = 0; i < v1.Pos.Length; i++)
